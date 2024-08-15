@@ -41,7 +41,7 @@ jobs:
             
       - name: Install package
         run: |
-          install.packages("tima", repos = c("https://taxonomicallyinformedannotation.r-universe.dev", "https://bioc.r-universe.dev", "https://cloud.r-project.org"), dependencies = TRUE)
+          install.packages("tima", repos = c("https://taxonomicallyinformedannotation.r-universe.dev", "https://bioc.r-universe.dev", "https://r-lib.r-universe.dev", "https://cloud.r-project.org"), dependencies = TRUE)
           tima::install()
         shell: Rscript {0}
 
