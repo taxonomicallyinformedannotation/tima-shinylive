@@ -36,7 +36,7 @@ jobs:
         with:
           packages: |
             renv
-            shinylive
+            posit-dev/r-shinylive@cf739ae
             sessioninfo
             
       - name: Install package
