@@ -1,1201 +1,0 @@
-Package: fst
-Type: Package
-Title: Lightning Fast Serialization of Data Frames
-Description: Multithreaded serialization of compressed data frames using the 'fst' format. The
-    'fst' format allows for full random access of stored data and a wide range of compression
-    settings using the LZ4 and ZSTD compressors.
-Version: 0.9.8
-Date: 2022-02-07
-Authors@R: 
-    person("Mark", "Klik", email = "markklik@gmail.com", role = c("aut", "cre", "cph"))
-Depends: R (>= 3.0.0)
-Imports: fstcore, Rcpp
-LinkingTo: Rcpp, fstcore
-SystemRequirements: little-endian platform
-RoxygenNote: 7.1.2
-Suggests: testthat, bit64, data.table, lintr, nanotime, crayon
-License: AGPL-3 | file LICENSE
-Encoding: UTF-8
-URL: http://www.fstpackage.org
-BugReports: https://github.com/fstpackage/fst/issues
-NeedsCompilation: yes
-Packaged: 2022-02-07 16:20:02 UTC; Mark
-Author: Mark Klik [aut, cre, cph]
-Maintainer: Mark Klik <markklik@gmail.com>
-Repository: CRAN
-Date/Publication: 2022-02-08 07:40:02 UTC
-Built: R 4.4.0; wasm32-unknown-emscripten; 2024-05-01 18:11:33 UTC; unix
-compress_fst            Compress a raw vector using the LZ4 or ZSTD
-                        compressor.
-decompress_fst          Decompress a raw vector with compressed data.
-fst                     Access a fst file like a regular data frame
-fst-package             Lightning Fast Serialization of Data Frames for
-                        R.
-hash_fst                Parallel calculation of the hash of a raw
-                        vector
-metadata_fst            Read metadata from a fst file
-threads_fst             Get or set the number of threads used in
-                        parallel operations
-write_fst               Read and write fst files.
-                    GNU AFFERO GENERAL PUBLIC LICENSE
-                       Version 3, 19 November 2007
-
- Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
- Everyone is permitted to copy and distribute verbatim copies
- of this license document, but changing it is not allowed.
-
-                            Preamble
-
-  The GNU Affero General Public License is a free, copyleft license for
-software and other kinds of works, specifically designed to ensure
-cooperation with the community in the case of network server software.
-
-  The licenses for most software and other practical works are designed
-to take away your freedom to share and change the works.  By contrast,
-our General Public Licenses are intended to guarantee your freedom to
-share and change all versions of a program--to make sure it remains free
-software for all its users.
-
-  When we speak of free software, we are referring to freedom, not
-price.  Our General Public Licenses are designed to make sure that you
-have the freedom to distribute copies of free software (and charge for
-them if you wish), that you receive source code or can get it if you
-want it, that you can change the software or use pieces of it in new
-free programs, and that you know you can do these things.
-
-  Developers that use our General Public Licenses protect your rights
-with two steps: (1) assert copyright on the software, and (2) offer
-you this License which gives you legal permission to copy, distribute
-and/or modify the software.
-
-  A secondary benefit of defending all users' freedom is that
-improvements made in alternate versions of the program, if they
-receive widespread use, become available for other developers to
-incorporate.  Many developers of free software are heartened and
-encouraged by the resulting cooperation.  However, in the case of
-software used on network servers, this result may fail to come about.
-The GNU General Public License permits making a modified version and
-letting the public access it on a server without ever releasing its
-source code to the public.
-
-  The GNU Affero General Public License is designed specifically to
-ensure that, in such cases, the modified source code becomes available
-to the community.  It requires the operator of a network server to
-provide the source code of the modified version running there to the
-users of that server.  Therefore, public use of a modified version, on
-a publicly accessible server, gives the public access to the source
-code of the modified version.
-
-  An older license, called the Affero General Public License and
-published by Affero, was designed to accomplish similar goals.  This is
-a different license, not a version of the Affero GPL, but Affero has
-released a new version of the Affero GPL which permits relicensing under
-this license.
-
-  The precise terms and conditions for copying, distribution and
-modification follow.
-
-                       TERMS AND CONDITIONS
-
-  0. Definitions.
-
-  "This License" refers to version 3 of the GNU Affero General Public License.
-
-  "Copyright" also means copyright-like laws that apply to other kinds of
-works, such as semiconductor masks.
-
-  "The Program" refers to any copyrightable work licensed under this
-License.  Each licensee is addressed as "you".  "Licensees" and
-"recipients" may be individuals or organizations.
-
-  To "modify" a work means to copy from or adapt all or part of the work
-in a fashion requiring copyright permission, other than the making of an
-exact copy.  The resulting work is called a "modified version" of the
-earlier work or a work "based on" the earlier work.
-
-  A "covered work" means either the unmodified Program or a work based
-on the Program.
-
-  To "propagate" a work means to do anything with it that, without
-permission, would make you directly or secondarily liable for
-infringement under applicable copyright law, except executing it on a
-computer or modifying a private copy.  Propagation includes copying,
-distribution (with or without modification), making available to the
-public, and in some countries other activities as well.
-
-  To "convey" a work means any kind of propagation that enables other
-parties to make or receive copies.  Mere interaction with a user through
-a computer network, with no transfer of a copy, is not conveying.
-
-  An interactive user interface displays "Appropriate Legal Notices"
-to the extent that it includes a convenient and prominently visible
-feature that (1) displays an appropriate copyright notice, and (2)
-tells the user that there is no warranty for the work (except to the
-extent that warranties are provided), that licensees may convey the
-work under this License, and how to view a copy of this License.  If
-the interface presents a list of user commands or options, such as a
-menu, a prominent item in the list meets this criterion.
-
-  1. Source Code.
-
-  The "source code" for a work means the preferred form of the work
-for making modifications to it.  "Object code" means any non-source
-form of a work.
-
-  A "Standard Interface" means an interface that either is an official
-standard defined by a recognized standards body, or, in the case of
-interfaces specified for a particular programming language, one that
-is widely used among developers working in that language.
-
-  The "System Libraries" of an executable work include anything, other
-than the work as a whole, that (a) is included in the normal form of
-packaging a Major Component, but which is not part of that Major
-Component, and (b) serves only to enable use of the work with that
-Major Component, or to implement a Standard Interface for which an
-implementation is available to the public in source code form.  A
-"Major Component", in this context, means a major essential component
-(kernel, window system, and so on) of the specific operating system
-(if any) on which the executable work runs, or a compiler used to
-produce the work, or an object code interpreter used to run it.
-
-  The "Corresponding Source" for a work in object code form means all
-the source code needed to generate, install, and (for an executable
-work) run the object code and to modify the work, including scripts to
-control those activities.  However, it does not include the work's
-System Libraries, or general-purpose tools or generally available free
-programs which are used unmodified in performing those activities but
-which are not part of the work.  For example, Corresponding Source
-includes interface definition files associated with source files for
-the work, and the source code for shared libraries and dynamically
-linked subprograms that the work is specifically designed to require,
-such as by intimate data communication or control flow between those
-subprograms and other parts of the work.
-
-  The Corresponding Source need not include anything that users
-can regenerate automatically from other parts of the Corresponding
-Source.
-
-  The Corresponding Source for a work in source code form is that
-same work.
-
-  2. Basic Permissions.
-
-  All rights granted under this License are granted for the term of
-copyright on the Program, and are irrevocable provided the stated
-conditions are met.  This License explicitly affirms your unlimited
-permission to run the unmodified Program.  The output from running a
-covered work is covered by this License only if the output, given its
-content, constitutes a covered work.  This License acknowledges your
-rights of fair use or other equivalent, as provided by copyright law.
-
-  You may make, run and propagate covered works that you do not
-convey, without conditions so long as your license otherwise remains
-in force.  You may convey covered works to others for the sole purpose
-of having them make modifications exclusively for you, or provide you
-with facilities for running those works, provided that you comply with
-the terms of this License in conveying all material for which you do
-not control copyright.  Those thus making or running the covered works
-for you must do so exclusively on your behalf, under your direction
-and control, on terms that prohibit them from making any copies of
-your copyrighted material outside their relationship with you.
-
-  Conveying under any other circumstances is permitted solely under
-the conditions stated below.  Sublicensing is not allowed; section 10
-makes it unnecessary.
-
-  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
-
-  No covered work shall be deemed part of an effective technological
-measure under any applicable law fulfilling obligations under article
-11 of the WIPO copyright treaty adopted on 20 December 1996, or
-similar laws prohibiting or restricting circumvention of such
-measures.
-
-  When you convey a covered work, you waive any legal power to forbid
-circumvention of technological measures to the extent such circumvention
-is effected by exercising rights under this License with respect to
-the covered work, and you disclaim any intention to limit operation or
-modification of the work as a means of enforcing, against the work's
-users, your or third parties' legal rights to forbid circumvention of
-technological measures.
-
-  4. Conveying Verbatim Copies.
-
-  You may convey verbatim copies of the Program's source code as you
-receive it, in any medium, provided that you conspicuously and
-appropriately publish on each copy an appropriate copyright notice;
-keep intact all notices stating that this License and any
-non-permissive terms added in accord with section 7 apply to the code;
-keep intact all notices of the absence of any warranty; and give all
-recipients a copy of this License along with the Program.
-
-  You may charge any price or no price for each copy that you convey,
-and you may offer support or warranty protection for a fee.
-
-  5. Conveying Modified Source Versions.
-
-  You may convey a work based on the Program, or the modifications to
-produce it from the Program, in the form of source code under the
-terms of section 4, provided that you also meet all of these conditions:
-
-    a) The work must carry prominent notices stating that you modified
-    it, and giving a relevant date.
-
-    b) The work must carry prominent notices stating that it is
-    released under this License and any conditions added under section
-    7.  This requirement modifies the requirement in section 4 to
-    "keep intact all notices".
-
-    c) You must license the entire work, as a whole, under this
-    License to anyone who comes into possession of a copy.  This
-    License will therefore apply, along with any applicable section 7
-    additional terms, to the whole of the work, and all its parts,
-    regardless of how they are packaged.  This License gives no
-    permission to license the work in any other way, but it does not
-    invalidate such permission if you have separately received it.
-
-    d) If the work has interactive user interfaces, each must display
-    Appropriate Legal Notices; however, if the Program has interactive
-    interfaces that do not display Appropriate Legal Notices, your
-    work need not make them do so.
-
-  A compilation of a covered work with other separate and independent
-works, which are not by their nature extensions of the covered work,
-and which are not combined with it such as to form a larger program,
-in or on a volume of a storage or distribution medium, is called an
-"aggregate" if the compilation and its resulting copyright are not
-used to limit the access or legal rights of the compilation's users
-beyond what the individual works permit.  Inclusion of a covered work
-in an aggregate does not cause this License to apply to the other
-parts of the aggregate.
-
-  6. Conveying Non-Source Forms.
-
-  You may convey a covered work in object code form under the terms
-of sections 4 and 5, provided that you also convey the
-machine-readable Corresponding Source under the terms of this License,
-in one of these ways:
-
-    a) Convey the object code in, or embodied in, a physical product
-    (including a physical distribution medium), accompanied by the
-    Corresponding Source fixed on a durable physical medium
-    customarily used for software interchange.
-
-    b) Convey the object code in, or embodied in, a physical product
-    (including a physical distribution medium), accompanied by a
-    written offer, valid for at least three years and valid for as
-    long as you offer spare parts or customer support for that product
-    model, to give anyone who possesses the object code either (1) a
-    copy of the Corresponding Source for all the software in the
-    product that is covered by this License, on a durable physical
-    medium customarily used for software interchange, for a price no
-    more than your reasonable cost of physically performing this
-    conveying of source, or (2) access to copy the
-    Corresponding Source from a network server at no charge.
-
-    c) Convey individual copies of the object code with a copy of the
-    written offer to provide the Corresponding Source.  This
-    alternative is allowed only occasionally and noncommercially, and
-    only if you received the object code with such an offer, in accord
-    with subsection 6b.
-
-    d) Convey the object code by offering access from a designated
-    place (gratis or for a charge), and offer equivalent access to the
-    Corresponding Source in the same way through the same place at no
-    further charge.  You need not require recipients to copy the
-    Corresponding Source along with the object code.  If the place to
-    copy the object code is a network server, the Corresponding Source
-    may be on a different server (operated by you or a third party)
-    that supports equivalent copying facilities, provided you maintain
-    clear directions next to the object code saying where to find the
-    Corresponding Source.  Regardless of what server hosts the
-    Corresponding Source, you remain obligated to ensure that it is
-    available for as long as needed to satisfy these requirements.
-
-    e) Convey the object code using peer-to-peer transmission, provided
-    you inform other peers where the object code and Corresponding
-    Source of the work are being offered to the general public at no
-    charge under subsection 6d.
-
-  A separable portion of the object code, whose source code is excluded
-from the Corresponding Source as a System Library, need not be
-included in conveying the object code work.
-
-  A "User Product" is either (1) a "consumer product", which means any
-tangible personal property which is normally used for personal, family,
-or household purposes, or (2) anything designed or sold for incorporation
-into a dwelling.  In determining whether a product is a consumer product,
-doubtful cases shall be resolved in favor of coverage.  For a particular
-product received by a particular user, "normally used" refers to a
-typical or common use of that class of product, regardless of the status
-of the particular user or of the way in which the particular user
-actually uses, or expects or is expected to use, the product.  A product
-is a consumer product regardless of whether the product has substantial
-commercial, industrial or non-consumer uses, unless such uses represent
-the only significant mode of use of the product.
-
-  "Installation Information" for a User Product means any methods,
-procedures, authorization keys, or other information required to install
-and execute modified versions of a covered work in that User Product from
-a modified version of its Corresponding Source.  The information must
-suffice to ensure that the continued functioning of the modified object
-code is in no case prevented or interfered with solely because
-modification has been made.
-
-  If you convey an object code work under this section in, or with, or
-specifically for use in, a User Product, and the conveying occurs as
-part of a transaction in which the right of possession and use of the
-User Product is transferred to the recipient in perpetuity or for a
-fixed term (regardless of how the transaction is characterized), the
-Corresponding Source conveyed under this section must be accompanied
-by the Installation Information.  But this requirement does not apply
-if neither you nor any third party retains the ability to install
-modified object code on the User Product (for example, the work has
-been installed in ROM).
-
-  The requirement to provide Installation Information does not include a
-requirement to continue to provide support service, warranty, or updates
-for a work that has been modified or installed by the recipient, or for
-the User Product in which it has been modified or installed.  Access to a
-network may be denied when the modification itself materially and
-adversely affects the operation of the network or violates the rules and
-protocols for communication across the network.
-
-  Corresponding Source conveyed, and Installation Information provided,
-in accord with this section must be in a format that is publicly
-documented (and with an implementation available to the public in
-source code form), and must require no special password or key for
-unpacking, reading or copying.
-
-  7. Additional Terms.
-
-  "Additional permissions" are terms that supplement the terms of this
-License by making exceptions from one or more of its conditions.
-Additional permissions that are applicable to the entire Program shall
-be treated as though they were included in this License, to the extent
-that they are valid under applicable law.  If additional permissions
-apply only to part of the Program, that part may be used separately
-under those permissions, but the entire Program remains governed by
-this License without regard to the additional permissions.
-
-  When you convey a copy of a covered work, you may at your option
-remove any additional permissions from that copy, or from any part of
-it.  (Additional permissions may be written to require their own
-removal in certain cases when you modify the work.)  You may place
-additional permissions on material, added by you to a covered work,
-for which you have or can give appropriate copyright permission.
-
-  Notwithstanding any other provision of this License, for material you
-add to a covered work, you may (if authorized by the copyright holders of
-that material) supplement the terms of this License with terms:
-
-    a) Disclaiming warranty or limiting liability differently from the
-    terms of sections 15 and 16 of this License; or
-
-    b) Requiring preservation of specified reasonable legal notices or
-    author attributions in that material or in the Appropriate Legal
-    Notices displayed by works containing it; or
-
-    c) Prohibiting misrepresentation of the origin of that material, or
-    requiring that modified versions of such material be marked in
-    reasonable ways as different from the original version; or
-
-    d) Limiting the use for publicity purposes of names of licensors or
-    authors of the material; or
-
-    e) Declining to grant rights under trademark law for use of some
-    trade names, trademarks, or service marks; or
-
-    f) Requiring indemnification of licensors and authors of that
-    material by anyone who conveys the material (or modified versions of
-    it) with contractual assumptions of liability to the recipient, for
-    any liability that these contractual assumptions directly impose on
-    those licensors and authors.
-
-  All other non-permissive additional terms are considered "further
-restrictions" within the meaning of section 10.  If the Program as you
-received it, or any part of it, contains a notice stating that it is
-governed by this License along with a term that is a further
-restriction, you may remove that term.  If a license document contains
-a further restriction but permits relicensing or conveying under this
-License, you may add to a covered work material governed by the terms
-of that license document, provided that the further restriction does
-not survive such relicensing or conveying.
-
-  If you add terms to a covered work in accord with this section, you
-must place, in the relevant source files, a statement of the
-additional terms that apply to those files, or a notice indicating
-where to find the applicable terms.
-
-  Additional terms, permissive or non-permissive, may be stated in the
-form of a separately written license, or stated as exceptions;
-the above requirements apply either way.
-
-  8. Termination.
-
-  You may not propagate or modify a covered work except as expressly
-provided under this License.  Any attempt otherwise to propagate or
-modify it is void, and will automatically terminate your rights under
-this License (including any patent licenses granted under the third
-paragraph of section 11).
-
-  However, if you cease all violation of this License, then your
-license from a particular copyright holder is reinstated (a)
-provisionally, unless and until the copyright holder explicitly and
-finally terminates your license, and (b) permanently, if the copyright
-holder fails to notify you of the violation by some reasonable means
-prior to 60 days after the cessation.
-
-  Moreover, your license from a particular copyright holder is
-reinstated permanently if the copyright holder notifies you of the
-violation by some reasonable means, this is the first time you have
-received notice of violation of this License (for any work) from that
-copyright holder, and you cure the violation prior to 30 days after
-your receipt of the notice.
-
-  Termination of your rights under this section does not terminate the
-licenses of parties who have received copies or rights from you under
-this License.  If your rights have been terminated and not permanently
-reinstated, you do not qualify to receive new licenses for the same
-material under section 10.
-
-  9. Acceptance Not Required for Having Copies.
-
-  You are not required to accept this License in order to receive or
-run a copy of the Program.  Ancillary propagation of a covered work
-occurring solely as a consequence of using peer-to-peer transmission
-to receive a copy likewise does not require acceptance.  However,
-nothing other than this License grants you permission to propagate or
-modify any covered work.  These actions infringe copyright if you do
-not accept this License.  Therefore, by modifying or propagating a
-covered work, you indicate your acceptance of this License to do so.
-
-  10. Automatic Licensing of Downstream Recipients.
-
-  Each time you convey a covered work, the recipient automatically
-receives a license from the original licensors, to run, modify and
-propagate that work, subject to this License.  You are not responsible
-for enforcing compliance by third parties with this License.
-
-  An "entity transaction" is a transaction transferring control of an
-organization, or substantially all assets of one, or subdividing an
-organization, or merging organizations.  If propagation of a covered
-work results from an entity transaction, each party to that
-transaction who receives a copy of the work also receives whatever
-licenses to the work the party's predecessor in interest had or could
-give under the previous paragraph, plus a right to possession of the
-Corresponding Source of the work from the predecessor in interest, if
-the predecessor has it or can get it with reasonable efforts.
-
-  You may not impose any further restrictions on the exercise of the
-rights granted or affirmed under this License.  For example, you may
-not impose a license fee, royalty, or other charge for exercise of
-rights granted under this License, and you may not initiate litigation
-(including a cross-claim or counterclaim in a lawsuit) alleging that
-any patent claim is infringed by making, using, selling, offering for
-sale, or importing the Program or any portion of it.
-
-  11. Patents.
-
-  A "contributor" is a copyright holder who authorizes use under this
-License of the Program or a work on which the Program is based.  The
-work thus licensed is called the contributor's "contributor version".
-
-  A contributor's "essential patent claims" are all patent claims
-owned or controlled by the contributor, whether already acquired or
-hereafter acquired, that would be infringed by some manner, permitted
-by this License, of making, using, or selling its contributor version,
-but do not include claims that would be infringed only as a
-consequence of further modification of the contributor version.  For
-purposes of this definition, "control" includes the right to grant
-patent sublicenses in a manner consistent with the requirements of
-this License.
-
-  Each contributor grants you a non-exclusive, worldwide, royalty-free
-patent license under the contributor's essential patent claims, to
-make, use, sell, offer for sale, import and otherwise run, modify and
-propagate the contents of its contributor version.
-
-  In the following three paragraphs, a "patent license" is any express
-agreement or commitment, however denominated, not to enforce a patent
-(such as an express permission to practice a patent or covenant not to
-sue for patent infringement).  To "grant" such a patent license to a
-party means to make such an agreement or commitment not to enforce a
-patent against the party.
-
-  If you convey a covered work, knowingly relying on a patent license,
-and the Corresponding Source of the work is not available for anyone
-to copy, free of charge and under the terms of this License, through a
-publicly available network server or other readily accessible means,
-then you must either (1) cause the Corresponding Source to be so
-available, or (2) arrange to deprive yourself of the benefit of the
-patent license for this particular work, or (3) arrange, in a manner
-consistent with the requirements of this License, to extend the patent
-license to downstream recipients.  "Knowingly relying" means you have
-actual knowledge that, but for the patent license, your conveying the
-covered work in a country, or your recipient's use of the covered work
-in a country, would infringe one or more identifiable patents in that
-country that you have reason to believe are valid.
-
-  If, pursuant to or in connection with a single transaction or
-arrangement, you convey, or propagate by procuring conveyance of, a
-covered work, and grant a patent license to some of the parties
-receiving the covered work authorizing them to use, propagate, modify
-or convey a specific copy of the covered work, then the patent license
-you grant is automatically extended to all recipients of the covered
-work and works based on it.
-
-  A patent license is "discriminatory" if it does not include within
-the scope of its coverage, prohibits the exercise of, or is
-conditioned on the non-exercise of one or more of the rights that are
-specifically granted under this License.  You may not convey a covered
-work if you are a party to an arrangement with a third party that is
-in the business of distributing software, under which you make payment
-to the third party based on the extent of your activity of conveying
-the work, and under which the third party grants, to any of the
-parties who would receive the covered work from you, a discriminatory
-patent license (a) in connection with copies of the covered work
-conveyed by you (or copies made from those copies), or (b) primarily
-for and in connection with specific products or compilations that
-contain the covered work, unless you entered into that arrangement,
-or that patent license was granted, prior to 28 March 2007.
-
-  Nothing in this License shall be construed as excluding or limiting
-any implied license or other defenses to infringement that may
-otherwise be available to you under applicable patent law.
-
-  12. No Surrender of Others' Freedom.
-
-  If conditions are imposed on you (whether by court order, agreement or
-otherwise) that contradict the conditions of this License, they do not
-excuse you from the conditions of this License.  If you cannot convey a
-covered work so as to satisfy simultaneously your obligations under this
-License and any other pertinent obligations, then as a consequence you may
-not convey it at all.  For example, if you agree to terms that obligate you
-to collect a royalty for further conveying from those to whom you convey
-the Program, the only way you could satisfy both those terms and this
-License would be to refrain entirely from conveying the Program.
-
-  13. Remote Network Interaction; Use with the GNU General Public License.
-
-  Notwithstanding any other provision of this License, if you modify the
-Program, your modified version must prominently offer all users
-interacting with it remotely through a computer network (if your version
-supports such interaction) an opportunity to receive the Corresponding
-Source of your version by providing access to the Corresponding Source
-from a network server at no charge, through some standard or customary
-means of facilitating copying of software.  This Corresponding Source
-shall include the Corresponding Source for any work covered by version 3
-of the GNU General Public License that is incorporated pursuant to the
-following paragraph.
-
-  Notwithstanding any other provision of this License, you have
-permission to link or combine any covered work with a work licensed
-under version 3 of the GNU General Public License into a single
-combined work, and to convey the resulting work.  The terms of this
-License will continue to apply to the part which is the covered work,
-but the work with which it is combined will remain governed by version
-3 of the GNU General Public License.
-
-  14. Revised Versions of this License.
-
-  The Free Software Foundation may publish revised and/or new versions of
-the GNU Affero General Public License from time to time.  Such new versions
-will be similar in spirit to the present version, but may differ in detail to
-address new problems or concerns.
-
-  Each version is given a distinguishing version number.  If the
-Program specifies that a certain numbered version of the GNU Affero General
-Public License "or any later version" applies to it, you have the
-option of following the terms and conditions either of that numbered
-version or of any later version published by the Free Software
-Foundation.  If the Program does not specify a version number of the
-GNU Affero General Public License, you may choose any version ever published
-by the Free Software Foundation.
-
-  If the Program specifies that a proxy can decide which future
-versions of the GNU Affero General Public License can be used, that proxy's
-public statement of acceptance of a version permanently authorizes you
-to choose that version for the Program.
-
-  Later license versions may give you additional or different
-permissions.  However, no additional obligations are imposed on any
-author or copyright holder as a result of your choosing to follow a
-later version.
-
-  15. Disclaimer of Warranty.
-
-  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
-APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
-HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
-OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
-IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
-ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
-
-  16. Limitation of Liability.
-
-  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
-THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
-GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
-USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
-DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
-PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
-EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGES.
-
-  17. Interpretation of Sections 15 and 16.
-
-  If the disclaimer of warranty and limitation of liability provided
-above cannot be given local legal effect according to their terms,
-reviewing courts shall apply local law that most closely approximates
-an absolute waiver of all civil liability in connection with the
-Program, unless a warranty or assumption of liability accompanies a
-copy of the Program in return for a fee.
-
-                     END OF TERMS AND CONDITIONS
-
-            How to Apply These Terms to Your New Programs
-
-  If you develop a new program, and you want it to be of the greatest
-possible use to the public, the best way to achieve this is to make it
-free software which everyone can redistribute and change under these terms.
-
-  To do so, attach the following notices to the program.  It is safest
-to attach them to the start of each source file to most effectively
-state the exclusion of warranty; and each file should have at least
-the "copyright" line and a pointer to where the full notice is found.
-
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Also add information on how to contact you by electronic and paper mail.
-
-  If your software can interact with users remotely through a computer
-network, you should also make sure that it provides a way for users to
-get its source.  For example, if your program is a web application, its
-interface could display a "Source" link that leads users to an archive
-of the code.  There are many ways you could offer source, and different
-solutions will be better for different programs; see section 13 for the
-specific requirements.
-
-  You should also get your employer (if you work as a programmer) or school,
-if any, to sign a "copyright disclaimer" for the program, if necessary.
-For more information on this, and how to apply and follow the GNU AGPL, see
-<http://www.gnu.org/licenses/>.
-‹      ­TMÓ05m
-íRX'HsGB‚—Õ–r`…P·Hh/+“LkÓ8²İ­–?›eœÄ©® 	ÉÄóñæg&_c}EôĞ'|^Ì&oèô„CzU2b#’Ç‰\—
-µ¾\jÏÓFı8ÅÛé4)yrÅW¸×Ş|îg\gaØñO¹á4“)äi'Çx«„A§ù}Z%$ëXxLUo:×'è<vjÔRëğby/ÌÜ5ÊîõiSpP|×˜©`£E±“!œ]¼R\œ/¦àŠ—*nÂ'ÓöFB€­0Yë)ØŠ]ĞË3±ÊLa3Ì¸6pJğ\|ãFÈä¦ä3Å×¨aI`sùü$IêTt1°9B.®Ğ¦ÆÕ&çªÊKÚ„¼øÄÏsÌ!áyB>.‰-ÎöÆ~ûÔ›¸gsê¸f¤\{i§·ïÑØÛÑ$,^±YEU£W¥‹¤âE¥c!KTİ`<­ñ"…ªåm
-ÿ¡ó/ó7òÎ­Úº“Zƒ‰MıCïıÔúŞo6alwÑé»Yı-©MÑá¶øŠØ[CzÙ9Ç5’9ìäÂ‰z^ÑƒÂn'!šíG0ú¸ŸõhqSºïÁB˜Öiø®HdJç~'¹àİOe‘`iÚó¼ÙJ•ê.™$çÚ‘qÊ£jµë•İGJncÇÿ=½ïôÚív?Hüüi2½?  ‹      ‹àb```f`a’¬@&khˆ›®“0ÃÄ`š…H«¥¥¤™%ZèšYš'êš$%šë&Y¤¦é&¤X¥™30°0!éaÍKÌM-F3ˆ;3¯$µ(/1§ØÓÈı HiÜ
-‡   ‹      ÍUQoÓ0ÎºVí  I<ñ€t¼¡V0Û/ÓJ¢BÕV$´—ÉK.5'l—
-~üÆ9±oŒi€*öàúóùî¾»ëùòõAE›Q»M¿‚QçËl<Ø'ğ„I[Û´ïÚ²Š©6ë€Ñ?î¯<Øñàµ»¼ñà­{øüú±ÌK…ZŸ6±=NğéC‚ƒ’Åçl¿æÓË˜Îí~†%Ì°ĞƒÉ²$tºµTÜ` Ø;tÌÀ@±%|ÃØHÍ‹9˜ar²$89ÀG)ÕĞ™F«Ğ¯:Xr“­ô1š7Ú™ğyf
-Ë0fÚÀ1*ÎÿÁ—ÈF¤cÅrÔ’³#oùâ k*Ê R.?GKó…`ªâÔš:“—S¦˜( f"&Ob“³E´8İÙ=;¢Ò¯*¹”y@ë”Ş}@c«£i³şŠE~†ªö^•
-IÉóJ…,QU1hçãiEÄŠªÿfE¡‡÷´eÜû]ã!j·ì›ñ)$<§í-+îÑê^Sé‘JaÛÅM{·]éŞ·ÖquİEwz…©;ágSf2wl}9ÔşÜ4tgÆh²ä±î}Ë„á7WŸÿ‡
-ô	½ü«2krzíÜÿåPşıt¾¬ëÃt7XµûÆeğúöª–·.ƒ¶¿p-¶é;ä@pægMÓQ«ÎkZ%º%º#K÷~_J•¬çP1–æVŸwmQ‹r  ‹      Å‘Á
-Â0†£ëÀéo^Åûº«Oà(xe«Vt:Ö‚o/fÒj—áÅ‹PÚôÏ×4í¿@ Œábán»IÖ ı	nb`áºä<ÅqĞ&U¦¼¤ù­¬j©u†
-oË­WÈoä‚$•ÈÏâ(}lÚÅüôŒ¤•ĞŠŞD{/¥…0âWvnT-EÑyàœ`÷údäß `}„z¯¢”ßãØ·Êjã¶VyfY)ødÎW×ÿH§59İUõ>ÒJÑû-{—5G2²åOèÓğ‘Ü  ‹      ÕUKoÛ0Vlnê´ËĞ¿°ëŒ»ì^ ·CÖz(›m„ù!HôÚşùu”%¥²–Èm3 “üHJ|Éş~ÌKY–Ñ{N,›½¾xÿ‰±äŒ„‚–¡9­­ËØ‚h¶®¤tº$Òåw«^AŸâV¯õ-©±yÅùHrÅ›š/j@¨ğœöÕ¯¸ÎO­¸ÄAAÙ(<ÈUòê¿‡o ´è»C\Sêû¹ğ[V}+)Û±`>¤ö é»$¶lyÍ‘û’n¹ŞæK¯°#Óš2’}4ÏA‹%Ê-l&Ì• ¤«ı4™ToÜ"KÂªu¼…¸jæùåuFn†¦´­<®ğœdç·ó7‡Ì>uø›AÃî5‘£é¼«~j7}s5Fb¡·*0»&ÄiÜUÃu÷êŠìÂšFRtpÉ¥ÍcË´cšşààÙ;ÏÜ8&¹ñÜ	×¥ioy§(T)	lÄËÈÔ¢õ­&¶ršO©D‡û„…êÊĞtœy§£ o‘oøÇ€‚€èvüÍ‰„gzş_:™Å±ç4Ì~”–ã=øsòü÷'­ìúöæğŠ§VüÌAu=±>çfè!/·}½­diÁ©åY`—×OıJv1uá½òèâËÇÖmHÉşL-3¶ï  ‹      ÕmoÛDØI6í@LL0ötÊ—u"qœ4¬%¥Õº¾ Š´«œMChº:çTûl|g² ~,¿xÎ¹slwÕ |"Jâ{Şßïñë-Ã0ÖÓ„ÿÚõè¬µĞ# ê†Q}Ï/ÓØ”Œ.Ôqã
-»·Ø#
-üz@½©`”yès†$¦Ø§¿aAC†Â	:Á£³„+‘?._P1	“1âe	7¢˜p´±¤Â(áÒˆ˜ô¼yŠ&a`a¡Ñ”l!øä±û~8ãB“Ä÷QŒÙ8v]P,pÆÚ ĞF3:&’Ï#y'À§T;'B€ı¼ƒ7½TôÍpt’ñ‡1·Tœ5ÛúÖÚSÀV×îv[6|wæuª7"1ÙvãÇ·&jüàSù$¦>:@ ğ·€{áIŒf€‡>¢»İÀ‰RnLÒG4m<{¦ôä íÃ´cÙ–­qC\¼‰7Š4R›H‘òsŸ
-á“acŠŠ|,djuh»VÇê* 'bŠEİPñ¼×L³j	|ãƒ!Ÿ27Ã,4 „ãyÈ”ìgGß_Z;èw4¡Óàüøôrxª­,Zr<™
-õÛíÙlf«Ñ¢­0öÃ¶dàÀáAo%72Uí%£<¶)çIÖ†kóìøå²8¨ó¼ßµûv]÷‘,‹v@‘¬ú	Ò.‘ÑDÓŸÃWK†ïî–íPq™ÇÎÑ¥:?Îìî!{·ßÓvùÈA=«gÙûh†y°Óm%ì–…3Ö"wc	Âö¨èµìoZvuöúNggázÂè;0WEP–¡aäg»4ĞæhésmD¡ğà„,¬Ò¬z?B÷.Af]so%b
-ÃğÂÑ¼'$‚fÒ)ß8¢0ÜPvƒ5
-âÓáœ8ä—„Æ$ ,c}à„ïæa—af¬>L<š0S> .a<#Ÿ27ƒv]ùkg Çòeâ9$ïÉÃKBÆüÆ™ú8k]¥i¬àõE€ZÏ†>‡É0R-§pÍÌµf™öUrãS7¯¹ö2¡¾€ÃŸpëÊÛ×T·pEgzM§¸ôg”Kêú˜ë’®iKÎ[¦ïí¯…}¢†¡ŒfI —°›¡SWRÚÌ“{;°Äøø~,±™Ëî¬ü¥h¦¢Uœ,åÅ['ß_ë¯†B6ê2kk% ¦ˆ¨¼'±kFö‘ŞTµ7ÕUrVˆGWÃ”S§}õ­»QL¶rëÿIQR`ähëêY)U×k¤$[)_ê)Ë×Òå³¢ğÖre­j>]t+
-×õz\Q~]-ÕJèëw2_ÈäİÌ"-{^ò$óµzÏú…cµÍôæß\-›.¨ú ÇÿĞäŒö½›¹÷µ¥ª;ìõlWŸó«Ñù+ı®¡¶Œªš3.lãMëwºÒ¶¾³`ïİŞÅ«G‡÷H]=¹Wˆ®tÿo{‘Â—†  # Generated by roxygen2: do not edit by hand
-
-S3method("$",fst_table)
-S3method("[",fst_table)
-S3method("[[",fst_table)
-S3method(as.data.frame,fst_table)
-S3method(as.list,fst_table)
-S3method(dim,fst_table)
-S3method(dimnames,fst_table)
-S3method(names,fst_table)
-S3method(print,fst_table)
-S3method(print,fstmetadata)
-S3method(row.names,fst_table)
-S3method(str,fst_table)
-export(compress_fst)
-export(decompress_fst)
-export(fst)
-export(fst.metadata)
-export(hash_fst)
-export(metadata_fst)
-export(read.fst)
-export(read_fst)
-export(threads_fst)
-export(write.fst)
-export(write_fst)
-import(Rcpp)
-importFrom(fstcore,threads_fstlib)
-importFrom(parallel,detectCores)
-importFrom(utils,capture.output)
-importFrom(utils,packageVersion)
-importFrom(utils,str)
-importFrom(utils,tail)
-useDynLib(fst, .registration = TRUE)
-#  File share/R/nspackloader.R
-#  Part of the R package, https://www.R-project.org
-#
-#  Copyright (C) 1995-2012 The R Core Team
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  A copy of the GNU General Public License is available at
-#  https://www.r-project.org/Licenses/
-
-local({
-    info <- loadingNamespaceInfo()
-    pkg <- info$pkgname
-    ns <- .getNamespace(as.name(pkg))
-    if (is.null(ns))
-        stop("cannot find namespace environment for ", pkg, domain = NA);
-    dbbase <- file.path(info$libname, pkg, "R", pkg)
-    lazyLoad(dbbase, ns, filter = function(n) n != ".__NAMESPACE__.")
-})
-   ¬xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈX$~£fAş1²D5ØhTA¦èhˆ(ÓÍüªõ N   Æxœ‹àb```f`a’¬@&khˆ›®“0ˆ¥€…	H02°0p‚ÄósS‹ˆ$Ã? ş¥¹À
-! ‰2€ñ?T+Ô ¤Ì¼”Ì¼ôb(Ÿ-5/9'ÆãJ,))ÊL*-I…‰°d›ÀÔæä'g§¦€l ­=¨  xœ‹àb```f`a’¬@&khˆ›®“0ˆ¥€…	H02°0p‚ÄósS‹ˆ$Ã? şUÌ‡)æÉI¬ªLI,I´J+.ÄøMÈ@¨9\P3PÙ(úX¡ú8’2óR2óÒ‹¡|¶Ô¼äœ|+±¤¤(3©´$&Â’YlS›“Ÿœš² Î¬’  éxœíVÍoÓ0]ºvíØ_Bœwk:Ê T» ¢ m I"7vZ¯NœÙNºî¿æÄp;uRÎH«ê&~ïù½ŸÏï¹W-Ë²6,Û–¿uùjÕ¿^ú–U{œNÔ³!Ÿ{Vö±kòçe[[éBˆùx(GÍRz9~©ñSÉ´ù&
-“Áà•rÚ”£•i³‘x©,w:®{éºßOcÀ‘’î
-à¹EgÆqí6b4ˆ„š=Ê—æ²A,0á†Ó¡ü0"pE:$€kÛ] ‚`[‰MYã#0Ñ+Ÿ¦ ;ğf`‚:|†44ÜæÁ>¯‘§1or|‡¨¯14Á\ ö…Ä¬—î{rC˜ ÷B0<E±ı±À€HJòL"piÀ]*™Ò6#Åmıb‰)A,¥Á3$¦êûKââĞ¸ØN%€£È`GÚåÙQ²6º(G&·Ïs—ÈA)œÒw>PB ûÄKyÜâ4fZÆmB€pRÄÜò) á§G0ÃW9•f*7KĞŸä…3Óò¡>ŠæÆÚ© |l>¥sõ¾g¤ÆA°0â¨HC.Xì	ª“µ3A"õú1¾ä½•F/aİæ¹	g??‰Ù!ê`Vœ€¶”W2©
-î Rp9²ªcUbéÖŠÔ•C=Ì˜–{¾/êû¢¾/êÿµ¨Ók<»˜uaïˆ)C r×ç‚àq^ö¿U¥¯µZñÓ†HHÊ†”!¾ÆIÙd‰"3Ô¡±ˆb±IÕjÕªjŒ5~ªV+~6d’×,ÎU++l0Y³DéÒ5%}Së„Úi*uñJÆ=ÉXÑ „ ¢û²Yrÿœüí_\¯øÊ‰NdrÀŸ(™ræ·ÎMâvßÇo·'äf\ûs>÷o‚®üLBçÒ9A4Å#?@/[¡ßí£ì÷{ ëÈİ(ÒjšËT¤Pv;ï:ı
-AÚÎNo MJbf­dŞĞİå¢WîW¸åÑ-¦iÇc¢˜âÀœ6	¸[@ €1-šE„<EåõÔ{­ò{	Y]ûãâ°h>’~Ğâ Õ›ÃÆüâµ¶%Ô›!˜Fı–`„   1xœ‹àb```f`a’¬@&khˆ›®ñX84[j^™••! \È   Æxœ‹àb```f`a’¬@&khˆ›®“0ˆ¥€…	H02°0p‚ÄósS‹ˆ$Ã? ş¥¹À
-! ‰2€ñ?T+Ô ¤Ì¼”Ì¼ôb(Ÿ-5/9'ÆãJ,))ÊL*-I…‰°d›ÀÔæä'g§¦€l ­=¨   1xœ‹àb```f`a’¬@&khˆ›®ñX84[j^™••	 \Ë  &xœ½TMOÃ f]ñ[§?5qÑƒ6Õ¨õ &&vtb: …ª‹¿Ü˜X™°…1fY$¡ç}yŞz; ¨ƒ0T_¨– Ş\Ÿï ÖÕæè€ÌöS!ÍîÇ‡qÏ/P›šg;X¢{BS¦6±ö¤Ağ©æ”mxû1$õ DÄÉ#ÊQ"q®íõÒPß°ô±ï´À—œÑ¶Çµ¶éw<`Ø$´i%1rhKƒAéÄOXVtèê`a’w§á‚>Ş:¢]ÏüPû´Ro$Ï»á"¬ŸçPHÆ=ø´à9¡²iË–iõ†¶pJ(nEºpq5}‰@„ÄÚĞ(ùÌ¨³â;ìÁn4¦‡U}œSbÊX›$(«–’Í°äcƒŠ"‡hÙJm²qU<ˆ$'\F¬P3XA["vU¾YÜËÿÔÃSs_ ¶6—­õB9,ÏE«ú¡~ÓGZtpN’¿÷q­ôDPëÖËênUŞop|âôsÉb£Œ•Yo_Ò¬q&ˆ$ÏØ¼ˆ¨ÇòŠE$
-ÎY.qk’EÔNG510Ne˜¶åãx…<:×3$ğu—{bÿxuºÃ¯í_Æã¢  UxœTÏoÚ06!)ÕªöĞv2‡V;Œ¨ÇMk·j…JHƒ¢ÁªI;¹Ä¡VMˆl©Ú?İë4iÔ!LòB‰r¾÷ò½Ïï×¯:B¨Šl[ÿ;úˆœŸÃ›æG„ìª~ù‹ÒÇB6z“8ReGçÜûä%~–~©d`³ûL¨>şË›¢ÇñÚ„şëßa®üY„Ù- è>d¤ØŒfL™‹=‡H.šºŠ5Ü"2z$czG…dÓ0ó84<—Oã1kó<»°»‚ßóGà}ä“TtâŒS ì~«=¸şÑé;·½BNSÍ¥B7¼÷F¹/ó‰1İ~Jì6ç[Ì¸™#T ‡I/$€¡ò;ëË¯ğë3Z>9v³¼f¤Cã|4‡8¯Ğ.œëL	ªbn÷®å#Ñ7Ùâ³EE
-]!•gªÈ°MÿFU%Y#ë3Î‰OiÜB€"îzÉWËöÚ¤T}
-M¢uy	¡§§ Z'ÒKÖÁ˜Š¢@·Là¶„”õÌı¹RuœÍå@¡â¨K¥L§4?Koõ¤âÌÏrª.?û*"zoœ´'¸ÓÃ­ö]ûûm¿Ûîñ}2²Ø(Û®³kmQPùï!°	€îàIz-¢r[|½ŞÈÊ\¦;­ÔEYEŞ-U›ÙéÖ>0‰uR>&4Tx–.~<°z «ªh/A4 ğ”ûpÄ)‘Ç‘¯…aM„€Yzÿ‹Ö•   *xœ‹àb```f`a’¬@&khˆ›®! ÄŒ,œ iÅ% 4Ô=  õxœÅW[oÓ0NÛ´ëÊØÆmŒ!!3Ğ´
-OCêÆxEB€öPy‰ÓR{²]Z‰ıh^ÒBÒ¦‹ã\¦M©•{|Îñw>±O¿¶Ã¨¦~×Ã¡Qÿüé}ûĞ0ÌZøã·1{ª†i,G®ñ°Ş±ŞZ‘_5üQ‰•IøõG7zñ`4ÎÎgvã2ü4Ô€ŸSicÕs!ëó#ÀÚ´ÄèLùf6WbŸuÅ§Å|§ç2>Ä2†y´¦³ç2ÉÜ€UL!§%è™÷CæëùD 1÷¤$=9@‘ùÛßqŸ „Q úòÙ˜p$˜¢uhu°‘ï 3‚8ÁÚÅÔ	Gqî=4íCÙêMS¼îXq=—éº»íØ:·,‰Ä=º,q_r5£€Å%– êª;;€uiè‰¨–ÙT-H'Z™Áâ"àş48‘#N™fÄc/øâ\ååÌ¸2OyUß9–ÆRµv!‰Ö)æ}¡„¯F“'ÆÕ“QºÄœ)ÕÿÊšâe34¤á6;dBDBÉJÙkJªue|/HÇŞW`¥òhù ˆ´\µˆ#‘ItFõohäê–Ü…h®<_Ü3ˆØD2Gd>¡ı©Õø+í¼û•ÒN	ı<ÁîÂÕ¨Îó"ê@›êÄÀ<$Ø=¾Ä—Øu¼©Œ.xÒLX¶îßZ†oÑKú?Ş€Û8\tÜĞçqÕ›âÏõ††{M]3‡Çä%<=ÕPf½f%ĞDã-p•‹ÀÚò„EGCÂ=Ş…”§Ïúı½eì]ºÃ?²1Ä'¶û¥ñp%q£QŒ1â¥ÃÃ–Œk=^=œñ£Î#ë {vÙÕ BëãgŠ¹ÈMÒÂÂò¨$}ÂL lõdy•°ªP`…¥©=íq6Î‘`v(„ Ø†¸©…ˆ²I™‡¾€Cñ¤ŸÉuÔÕ ”$”÷VZŞl$sÇ´O`‘ÀKÔO¬¤‡ üƒ.+“ß"Üçxªa(R]3l{öó×8ŸÓÿğ\Î†³KÙ«’ÅÜ•¸ÒãÃxœlCÆU1ŠğµWs[%fşwô†—uŞ¥§VpK/"q?H=ÊÓø
-X»­Œ­¬+®€«Ç´*Ñäİæ%ıT¯1ójşc‡¶  xœµV[oÓ0vÓ´Ûº‹Æehc€<`/‹O mÀh/€6úPy‰Ó¥vd;İ&ö£yEHNã.nê^ÖA%GÎ—cŸó}>Ç§ß €*p]õ¬©)¨}ûúaï5 nU½üùÏ.XÊC!õ´öÒ{ãevz©h°r®ÊàXÃçÈ—jÒèƒù¸R£n®üÙ÷=:$´ •tS½6¨¥ã…3Ä)¡mıiİø´Ú’6eå }E4ĞÎ®†±ìit€,u±D-BCf1_ôDr*°|•sRK€n¶Á¨Ëº§³shAë¦mÙÉ¿TM½Ö2«w¿Àà7FG»¯CÃ×Z:nw ¦í^0’Å¾D	5ÌÉ@F1$Tâ6æqèwWç¨^zØ—
-Šû$¼€²ƒ¡Ï¢¤Kóã]J§Ÿ¨IyÕ˜'ú~*ÑuÛñc?á‚ô2:>WY
-‰€
-ã˜ÊèBU‘Ä1ã0‰3jîáî{óºv¾B„w­œ…Ø,6OT
-ûœÄ²D²„â¶±9——´r`›Fì“dB¾›½-ÀûéŒmğ<—‹®«òÏá1;v¦*½}‚}Fƒ<Oæ»1–ªE]<Ê;›?HÇĞYÎkê“Z)€]Š.Òi¢–NeÒ%[çX&œÚr¦Ù´ ‹£ •u²é¤ÜõoJíw3-u7ä¬;{r­u$›seƒEŠ ã]$óVôJkÇ¶6UœQi³lµYyQ€wmu±Ğ¤‹9ñª†‹;å{t‚øhkûE[ÿk[xfk:§)Ô½Yj@Ûn”m6dËå­ÛHºqD{("VFß5E 7½eÌ 'İ*[%Ş0?Æ¥ìSë]BwGã›WÈíÁ¼l[ZóÈXóx‚ß'†ÍwRğÏÿ/y ˆ7  xœ}PM‹Â@MÛ©´Á±WƒxRğ¼¿`o%b‹Û‘ÎÈ.ì/_„ÖLg\ÚZÌ!“¼¼yù8$ €ìC!Ü}.7 "àä¬ù  6Ä\i†+Ü¢áùœxô~ØİG`\Ëo¬¨Ì'Í¨É«.dE“ïlÀ	Ñêšï0ë7üí¦‚şnéĞÿÊLSZT¹œ G¨nG•éµ­ù­ã,za\ÿfBcN
-O¤	óšjRgtJÍù^kŞ‡£v4¶¸’>O-‘Ö’uIÚJÅí›Ù‡ìŞc÷†í³ş ’<j   Ğxœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈX$~£	2ëééA„ş1²új°á¨‚ì‰Åz9™@‹0¥xR)‰%‰ziE‰¹©Lÿ¡ƒ1 È”¿  =xœS]kÂ0µõ£e?áî©O–ÆØ`Ûö0˜ƒá‹d5Ú€6’ÄØ/İ­m5j†` %÷Ü“Üs’›OŸR'®‹§Äûè¾tî	qëüb8Ä%íœ8Tºœzqôå<ƒZ	Ö–øû= ıDL¦’)%$FWFÆí½wŸØ›‹Ã`“Ú=ª›R•æÎ
-¿†©è{#tøĞ‚Ö®- ÏU”Í&Lò¤Èºë²ÊjÇn¬-+]¥Å´ÄMÓÏoTÒ	ÓL‚aT*fã|1 P„9ÏğtÊ@ÒlÄ -à&†¦!¤eu‰v’$X¿È×Oò×wÇ&„4<(¦s¡ákï6Ì„ùM‡Ñ™ª¨ZÒE‘qÎÑîô.+È„®4R<ÙÌY¢…üGà®q;%Z!AeŸú¸‡eMßLN2ÔW§~ÔlTE<ÓlTİÍ¶ÙpîY|7m»´x–bûhUäÛy´QTŸI¹y’'20¯LìoGŸ  &xœuÁjÃ0†•Äé–úÚ4ìØÁÎ;÷°ÁnÅkTbhç"{maO^É”Ù£Ùp2ö'é¿^§ P€Rr—ò„òåùi¾ P…|ÎN
-ª¡pã||–÷õC=ÔåòÉ"ÌNr}It“qâóGå/ÌÍ&A³»œW³>†LŞÇ	İ¥²è]Êy»|6â‹¥f½#OŒ't­ıØ6øF¨QFàÖŞ2oqmw{&ç¨ÁF{]æv)CóHÉ¬¡‹ÆJ¤]•,5”]·§RönÍ{Kl¼¹ªOXÄWÄlùú¾nú‘À?}ºşJ|  txœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈX$~ñ? fC–¨›‚&˜ŒMP‹ ‡^qiRqj‰Dé?T ’–ÜÔ’D¨ÕÈnâÈ+òOÊ//F’C6›-'5/½$!ÃúÁfûO†üÉù9¥¹yN‰Å©!•©0‹á Éü&ö  ˜xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈX$~ñ? fC–¨›‚*È’“	4Sœ'±X/9#±(1¹$µ‹<{qja|Nj)F,‚zÅ¥IÅ©%F9¦ÿP5ÈnÉM-I„:ÙGyEşiAùåÅP¹Hj€v°ÿG°9ş“a>wr~Nin_bn*Š ğ­,ë  xœmRÁNÃ0Íº±	$>ÁÜ@bU¹i\9"€¸U^“®YS%=ğåi%mëJ#%µŸŸ_b»osBÈ”PêÎĞ™$|y~X,	¡Sç|‘n„’YCÌŒõfGwQÃœ3ñ -Ñæîû=ÀçJ²$Sz‹¶ñÚH·önŸô˜“Ïöºc0Ùzyß¡ÓÚG‡Â>ƒÖ#ÙÔXUzü¢‡?>¡Æ-·\ÃáÑ 0^j‘¢åì\ ’¨´°–P	›·p‰é;n8|pm„*Fnx©*'os, –Q&W;É`ÍAsdp…s–×¾†ÅfLİÀê¾•¸#_óş¸öC·Vş!™ë‹nÆƒ±º~à€wÖ`-&Í?ÑêuoûÆyªdb¸ä©íÚò U5FhÔ~û•M5L%Ófu/¡?€™{qbq-ùĞ‘ á|F   Êxœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈRX’¤£‰såç¤Ä§åå&–€x`øÄlH*«ÁÖ¡
-òä¦–$¦$–$ÆƒìË3ı‡ĞÌÿ¡†ü p¾í   xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈV”X–šdıF“áJÎÏ-(J-.Î/Â"Ë“ÍÌÏÃ"Í’‘Xœgø²I±ì>TAV=çÄœ¨L'èzY‘cú¡™¡4”fıµé ´’%'   µxœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈV”X–šdıâ $YÆj°Q¨‚¬zÎ‰99P	˜ _<Ğ"NIMÎÏ-€È2ı‡šù Änú   úxœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈV”X–šdıF“a)NMMÁ"Î™”“Ÿœí‘Xœ‘dø2Ic5Ø~TAV=çÄœ¨L/è:Î š–Z‘eú¡™¡4Ë¨ÿ wLa   ¹xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*È‘–™“ê—˜›
-dÿâ@Ì†$ÏX6UUÏ91'*ˆZÂ¹©%‰)‰%‰y¦ÿPSÿ N‰€  *xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*È‘–™“ê—˜›
-dÿF“ãOÎÏ)ÍÍNÍIM.ÉÌÏÃ¢„£¸$±¨$(¿‹[j^
-\†áHI–±ìJTAV=çÄœ¨LP è.J-)ÊL-K…È3ı‡ĞÌPšJ³ş‡Úö S})  )xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*È‘–™“ê—˜›
-dÿF“c-ILÊÁ&ÁœŸ[P”Z\œ™Ÿ‡Eš¿4/3-¿(×5/9?%3/¢„á³!)c¬»UUÏ91'*äú„‹Kò‹R!’Lÿ!43”fÒ¬ÿ¡Vı ÕÆ(¥   ˜xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K= :†@ÌÄŒP	Æj°TAV=çÄœ¨LP8h\|zjI^Q~ZIFQjbJ1ÔÀ É«š  ©xœTAOƒ0îXaÑÅŸĞİ¼Œ¨§™h¼yö ‰7S±b„vsF´Wc¶£K;öæl´__ßûŞ÷^yB}„±zûjŠü‡ûÛÉ!ÜW‹oÔa4Ô†‰fêŸE—‘¶óÔ¢gÀŞJ½~: Œ½¨oİÁÃg^Ä¯O)©^­wÚGY¢Àuû±æ°zY ½1 2åÎÛ­~cBÔÖÔoì<h ¿§øiÁ¡sj y×$æ¬Êb€G{²Ù¯4à,ŸÉ´ãO[´ÕÍÚŒåC±°Eiğ¿¸ãŒ
-FDÉâ,y'4'Y.ÙŒUdIù‚‘¤¨ˆLÑ%%ºêÕfu5q¸ï(FEdìQÌñéV-üO-x1Ëbjz=qäœ<n:vih;ÚÌ]=§]=‰áäÈYÒŠÎ™TÛÛ²GÕàPÖÊº¢oíwà€ŒÏw+dÉb©¨R¡Ú¡\H‡óêPÕE§´©°×l÷ƒ­Ë/êÿ¥`   “xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K= :†@ÌÄŒP	Æj°TAV=çÄœ¨L/h\|Fbq~Aj^nÔ¬ ia€  ixœSQOÛ06ml‚í7#ñÀ¤uo ÁË&Mâ‚mo•×8ÄªkG¶CÇöË'¤f—Ä¥Nê2"%±ï¾ûîîóùÇ6B¨‚ ¾!,Qxwûõø¡ ›¿¨yz(@QLµ±ËpŸÆ®›krb2ø?uìÛ’'£Tª)1Õ®ö4ÏŞM¹ñ§N×6öXê³œ7Ö~i½]b”è@™[ûc¿¼&ŠL©¡
-/‹ÆLã„æŠ‰¡ÉG2à”qªñL1c¨À3f²Úœ“ñ„ÜSü@•fRx2|Ã\Î€ŞdDàa|±ÎdÁü“bEI‚ˆH`e¹?àB3qïc×øì¼¦ø4ŒmÏóvïKµÎ­ua‰Ò‚ó‘=±.ü­¨çì7½~ôÊÎ±¦…6ß¥šx´wj”ÌĞ—$ÄOâh³íÊUÊĞw¤&2
-šéÆ÷fqÅ€~D•’jıŒl•GÓÕ~Æ’˜H¥oÎ8ƒ;SëVé­h(ÔUz#gº{Û]¼³Å´ïÛ„>ÚÀ÷e¿L ˜K˜hí‰ßÂ‹©X¸_¤è:šİ†æ3Ñôö1ÿ/U•uõ‘üB$ô—Ÿiß§…íå5lt™|íñºÇ9Ñv°vK'À®ÎìÎ]ø?‹›Ò   áxœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈX$~ñ? fC–¨›‚&¨‚EC¯¸4©8µÄ"ÇôªF IKnjI"Ôdë¹“ósJsóüsS‹¡Òÿ „Ä  fxœµûOÛFØÎûQhZMZ7ö°–-¢ƒeëJ'ÄZĞ–I•Ğ]ì±–Øîù2`ë½_§IxgÇNî.Ÿ§)Hç»ï¾÷Ó¼ª(Š’Ur9ö™gJş×æóÆ¶¢ä²ìË¿Êğ'£ä”²Øqiø˜ßĞv4/Ã¾¨!P½dÿIÀEkĞocÒ²;-b_¸>Ä?ıî($.bg5MQ®Ùo§şw ŠÌì5Bh)÷1E-ÓêØ zIsmÓÍáYÆqjNÎ'ò¿hduDkÕ=fzÇìá'ñfÙ¨¨+C`Ñ“ä/Yä¤óóĞR× Ÿbİ7ãWu€f¡‡­sÚŸT¼&UİîúÖKÔÇˆW¥>Äsë÷!c¶‘‹-F"ÃœƒÁâ8eT*r(¸Ø‘°”—dÌdâe X1]E$&¦><Íz“¾.xÜ™[((Š1‰{‡óî]ÈÓUÆ‘…£i™ÏÀRù$(>Ç #—#û1êÄÙ³@08)›ÖŸ¦k¶{  ;~‘"†ÜrI)6 ñÖÖ çA§>‰µª7–2ğgš¼ttÂRµ¢D?×J¢Ù?àèæ¹ç	«Ô\Ôw˜YÄjU#È.%Âà-¿äÆÊz;”UÈ›\‡ØıHöƒ"ÑœµGÚ½bTìcn“~PìïRÈ¬™"vš¸,@‘Ùã~’à^ãO=9<ñ·Öx·úë^ò]gÙ»sT9s ±P#mÓ24ÿTëQÉı8$óYL9€bp…ƒ¥µôœJ'©¹g>CÁJš[5­U€s¾mÒ­GÙz62°´9éB¯‹mïÈºÀ9NïJ²á(WM«ËZ
-uéÊaå$Lâ¼@ğëIp+RgN»­A^*YÈ²©É7í/äèáxŞçè="h}ı$ek‘² ş»Ô·äLĞ„nHãüQsººw#uÃz'6Ğ¸ª§WvrªRXXö…•õ."H§Ñü :ìÄ†Nmb`‚z,FQKÄ£Ó“_^éĞ¬\2ÌN‡BÑœÏ…šğ‚aÆîFùRo-ZŒÅ}nê¨	Ù?-…‰˜ ‹!RbºÍ¶«ÈëíÀÁ0ÊÁQ}„Œ«tåS¦ƒ"»‡iP#†ªÈj=¼Âøø±¤Öˆ­ -w‘Û
-V&ó7ÑJ~"ùû'`…kXÄ¼NòrÁøQ÷ lõlÔšª¼€5Ãü[‹ü×7|Í“B÷ŠƒŸ5TPüb#›L+ÜÙÙ–'Ş‘õXHØ`F4ïğ#CX"@ÖMQw¶.6]ı-¤q–ë¥lñLƒ"o%¸rAê!¾+v½ÙÌ¿>Ìaî}H¹|0/r¾v’.©QÊŒ`ã]a$‰üº'gÛ·+P‡¦òÔxİø‹›Çÿà™*ğY¤p¿/yâk¨ã«õ8¡S-6àr"òcÎç³-¬Âf“XU)ˆóY…æâE9t@°f¨3€2<Ï¥ş¾Ì/©=eŞ¼C£AoCrĞxsy‚®®¡QjNZo}Â_\QxÂªõ#ÜÎûÎ=~•JërÔÆ ™0ëâ×‚cygÕ9Q†sÖ™%~3·şNsÕâ0üûB2ì¸›{C™L³êÒÙÃíİov7m÷SF?v}§/åNÚ¨fËDSlç|=ü>|Ş’Ã)ÆJÏbÂn¾6cÕ€^‡Ê9{“¹rÈİ{Ä'…##Ø1“B}dªÄPºì—ÉR{Jw“ÃúXæ%·Yˆ÷Se‰@NX¶ƒ,Y:Û|˜*Üûû¢Eñ%m¹æ_Üv>äÛœ.h¹,ı~¶ÑØiü¶\Ë_'
-Ş†2@¾S¨£ä¥D:çå¹ÅfX½«ş3ƒsøş.”Š$gÁåŒ{[5h»‘À33ÊÀéÔÂmÎ¡é‰ìÈk²ªyË·ñLcò¨ÌİW/Uú÷ŞôJõ?Ènô  &xœVïKÛ@¾´Ij£q¿Ì-nuÌà‡1¶!ƒÁü2Çt ìƒœé¥Ó»z¹LeùÌ®IÚ\Ò÷Úl…–ô}Ş{ŸçŞ_í‰ƒj#Ó”Ÿ–|DÖãı÷™mùåÊ_-d¢îÈ1ˆEñhíz¼‘_K~1
-£q-?nkÆ¶çy¹İÉ·­úÿÎ‚Wm‹Â¼¢˜÷$¹„ùä¡Š“V
-D1^åÆÖ”ßÙU¬Qy:.—àˆiG„öÅy‰Ø©†dÑgQ2 _ñ€Œy .ÇÍıbw [8Ã1¡2DBsˆ3a:¦ö¶ãÔë“aÍU;±·övj|–¸fW›Ê»å4¡”]Q êúç˜c_€v !ËŒ÷'=WëÑ	© }0lçÛáÑÁ‰uÙB/Nr®bÖÁ,`à>a÷XrAˆ©	õßÒ4
-:ë‡> Ì	z÷"£˜2Y›ã«Z«Uš% k'Œ=šDjĞËä¦>5ÒßTÆü^ıÌR>H§´˜¸©ÑLöŠŠ,ê³9<¤}½ºnš«©Œu™°¬ŒjzŒMEû¼5eq,È.åÖk7·ŞO!ô£D3~æÆe…jŞ:.Y·9§¼øRŠš-›‘p
- ²ë~…qXNÅğ®UyÊœÓÃ{ÏöcõWè¾ù*XBŸ%TÔEÆäòGlVCŒ£ME\‰³VŠ?ÇûÙn%×Éğ2_À%ËÑ“u9iÀJŸ§iÎ±şCs,w~>£ººKEJÖÒùõ¤ÄM›İx*«5 ¼Oª«ĞŒª\­$"ïZ¡6jfÌ¸hXåšcëiÕ÷âû°Á¹‘–GõÒ-‹YBÊÃQõĞc(O¶»%÷©«÷L½WEÛöl]k3ë8Ú÷¸+Èi «Ùh¬*ûÛĞ0 ş¢®úM¥Hİó`E&›}n—i7~ıÔË9º7µ5n²İïşÿ²I³  dxœm±‚0†Ò‚’è›Ø8êäæhâfN8kh|iWc^áA;ô»ûïÿ{é!€¤¤[Q	j¿Û.V 2¦æı aŒ¥ó\ª¥^ëàÔD,Êúñ=ÒÓ³5÷êê¨lÆ‘²¶q´Í“=ÂÛ?É:£Gíñd
-²nøÏ¬É¥­+ôCWx’/gôè>;'u”w¾Ÿ‰¶gÌ”LÅL˜iËšà“'w  yxœ­WYo1Şœm-—€J2—Z®ÊTm	úTUj	‰ÈMœdUg]l§Çæ!5Ì&Ş¬×;É‰HÍ:³ã9¾ùfì~ª{WòÊeø®ÀÒ«î®¿ğ¼r	~üöÆŸ¢Wöj‘b[i³¬lø/ıH¯?
-FX>¥ºÏ?|¡)x¿*X»[ÚRôà¹É^ı2Ó:E-KTù-ª©¯é1g ¨^f·×o5ÚBö¨NkE&½ª¥Yø1J6-,n­i,©µÎ!í1D})Œ<ñà;;ƒ
-Å¡Òb¯¯ôG!O€Î±‚6"-ÜC„òÃ>çãW¥aÖêâ0Y/Yëå!bî"˜kv©¤MÍä|6“Ú*-Nü²%s öz’UÃŒU¢º¢Ï[ä˜J&Ékj!‰h“±"‰PW¾Ày6˜%,˜âÏŸ‰ôj^ÚõŠ=&ƒæømI:)Ä–¥TÌ²yz]ïm#Ò*ga'æÎÄñví*\‰×6ò»òQãM`ïÒ³x“2åäŒò>#ìkÖP Ne6é.És~ã±6tPH
-İ„šuba€Ncã%³®ü›§•øÚ[×-½®ŞÿÀÿ…¿yè§@'kP†ı£½½Ç9ğW¬ nbÉÎ =`!–¹ÃiŞD÷“D“éKEZì4JQ³Ö3§	‰F©"hÍB2tw$>¥ÍÚaĞÿR"D<| \bt6üş†5B$£-²FÃ¬ŒíÇ¤¯‚°ƒYWdk{dâùF¶ï%ÉÂò`]2-vfÎ†ºÙYrš£:·ƒ°¬ĞÆİ
-†vÜ6˜”Bæ—iÅ¥Â´ë¡lˆvCŠAœé²E‡hè…l;¥:IM’xÍ±nÇ9#;×8—[H?§çïçÏ‰ôÎ0Íİy:îãgg;SÄÛÍë$ÁDö*ãzÖÑ[öeèå'7#ê÷’{i¸,áà$Ûkh¶øds¶nßİÒ·EØË4ÿæ%ã§0;mt½9àŒ*F‚PiÊù¤é¿dĞ…™3©Ë$Ù&‡ïŞáèd¥vÂ¾nƒÖDpáN˜ÊûFwŠáÒ‡67k)So*Šé·‡i¹@ê{i¡G™ÆH›ºæÀßªÙ³æ± R­­‰…¶ªÇ±åäş¿ÎµÌ–†Y2*°P3Œ~8D(Œu-‚Óã§˜·J“S¥¦†Ñ–ãOrÊ‘ë¦óßwÈmJ.ûÇĞllÙ‡"G'È¤=Œ«[SŠ…ñTØY?µi8¨É²aá\Ló™y®[!er´a>ÿ€I,å  ixœmPÁNÂ@] •È‰OOèÁÆ!zôÂÑ˜€‰×í†ínİBˆ_î…8-‹¢é&Ó¼¾¾÷æußGJ©Jy¦Uú¶œß?*•äåKN_%êºnG˜>dO™èÔQæJ¦?ô>[Ã_²¯7lï¦ƒ{úØiO/XQ¨qMQ3¾Ğ¤+Í³©”ì_C±›ƒÀQKŸæçÿá½Õ¶èˆŸ/\E°vfWÙ è	øPL´e*ÈÏ¦Xí¤Ü‚¶è Ö1h¡<ƒäçeéÂoô^µ—\À =ZÉ3Îm¥lŒCn@íEŒ¡¯Ë’¤c[ ,QìÀ“¸•]Õæpî—ÅòávÒÖŸÜ5&·bÔ¶kÇ´	úùÿØ¹".]hóHœ·’“]Üşñ‚r|4  ZxœmPÁNÃ0M·–‰ö	æT8q> Ä…Ë
-âê¶Ş‘&%I5U|9—ŠtÍÔÉ‘c¿÷üœ5clÉâØß‰OYò–=İŞ3/ıã‡gÁbv9 wÖ…4¹ãÜãXïãÂGÑ÷‘ğ·¸»™jt5SÜúj…¡W¬É6XPÀlÎ0ër‡¹ôİxqÖYy.9Ù cyŒ>Äÿa«%Ô~fÆóV×…–m­, !p]C¾d¢¦òÖw÷‰{‚ÉJ;Ê:”’J3ÒY¥í¤}RBc„x…6†
-¿‡¬"A•àôœÚ»!©Ñw«à¶¢ndw2ÁƒM{NFÓ›AMç…š˜ã£•™IP“«t	¨Ê :1÷^ˆŸıtÿé]wÍ  pxœmQÁNÂ@] ˆrâÆz°ñ¨?`<yH¼th7lwëîÒøå^ˆSº4İd6¯oŞ¼7›~L•R#•$rªñjùòğ¤T2’oÕ¡JÔM#Üpü˜>§¢SG©+©Al¾NÉ¡Şö°ƒÛræés¯=½aI¡ÂEÍìBsmÑ:Ö¥ô’á?‘IbSœè¶±şGMè­¶yOÂëÂ•gö¥€€ëŠ`ŞÏa½gõv˜t,è ‚@ÛÀhe)ôx¯–…góƒ6*¯-ìÑŠ¥qn'«ÁÖ8äT®QdÈ˜Â² ÃÀeÀ®/èİ“LK· 8¸Ğeeên¿4îîÎïºo¼ÜšQÛÓÜïÓÚ{R $.\h³(êò s±I/şÀñlW   àxœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*È^”Z\’_”
-dşâ@Ì†$ÍX6U33¯,³83)'‹$«sbNT&(tF<ÔªøÄ´’Ô¢ø´ü¢lˆ2¦ÿP›Á şŸC  †xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈX$~£	²¤å@Äş1²†j°é¨‚L™iXDk°	*B™ÿCÇP`‡E%/9?"Î„¬‘¤ÆşüÃa([QjIiQš	ØT2EG#©Âi `% ï  Fxœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈX$~ñ? fC–¨›‚*È“X¬—œ‘X”˜\’Z„E½8µ0>'5‹P8½$‹£
-A½âÒ¤âÔ#ˆÓ¨$5,¹©%‰P§#û‰?9?§47Ï)±85¤² µª æ«%   ¿xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈWäŸ’Q”š˜Räşâ@Ì†¤„±lª «sbNT&(´-¾8µ$¯(?­n(P	Ó¨Áÿ >	#   Óxœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*È–Ÿ”•š\dıF“aÖÓÓƒ3ü)D’b¬Û€*È\\R„E˜½4/9'±¸"ÅôjÍcÿ {i|  xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*È›WŸŸ_’Q”š˜Rø‡¦@ (µ8µ$>1­$µ(>-¿(¢ŒÙÔ1Vƒm…"K0YYAe`"ì@7%ç¥¢	óA”ÎÉL‚ÚTÁôB3ÿ‡Ù ïË#›  xœ‹àb```f`a’¬@&khˆ›®3ó“˜X8A
-ÓŠK LV=K=:& ‡*ÈX$~£	²$–d`çHÎÏ-(J-.²ù@âPëPÕ	”æe¦ååÆ§æ%ç§dæ¥Å¸ÀòüˆÙQv1ª gyQfIj<Èı`I¦ÿšJ³@iÖÿPÿ %   ·xœmR±NÃ0uÓ¤M#Šú(¨S#F˜Ø:€`«Lzi­6NtvP/GHMÆ%	\$[çw—wÏïü0ÆúÌuÍî™yÏO³ÆÜ¾9|³ús˜ËFUa¢´½ëè6ªêsèY°·3ÛÏĞÍ¹^¸gi ”‰Ï+üşÑ¶ëÖM
-)’ÓÈ8[
-¹2XpÌ×koÖ -âë¨¸:"!ĞŞ%	Åk<Ö€u¾_Ú>{¢ŞU:Ë->iáó-p¡Ê!ÉGÈÃ8C„X‡•!ÑÆaÙÄ~IteK®y” O¡.piAIÈ¹²rR¾1š
-„pº›†B]gxä$T5ŞÍ,ú‹,5Qç›Gb,A n Í ùV|Â¼~ÖÜîÃH¥_2Ü´ÍQeMÀU$¤†ÕidnÙüá)_È5 ĞªÎ)Gæz@Ì°K8h0n7¦< è%‘	ù.”xÛRsŞ ²}‚‹      m•ÏkAÇ'Í¦?“´iªõê¡‚¨]mS­ÖS)í­Eh¡Â2ÍÎ6Kšİ8;iUğGÁ“—‚'õ ‚àOğ&zÄ«½{ğVTŠÿ õÍf§o’M`óİÏwfŞ{óv'¹ÜMIÃ€ïÜ’ÔÅ…™á³„´åÃºƒ+W©²ñ´€œ*7ñcB_‘;<!ä®û ¦Æ!írfär_;èO·A¯#çJï.rÿè6rşè3äuĞ÷È»ÎÁúKÈ»7@o#fAh,cÕ÷ìİĞøèä½rïÏ5şúyŸ -küê¹‰|à
-¨£ñ'ßB>øôò!èmêò‘Ã ?v‚¾Õøôÿ7ò‰×ÿ<òğ&ğqä“9àÓÈ§f@ïi,ŸıCäôò(¬'·4ŞhìW¡ô‘ÆOAŸ MA~è™!ßÍ1ˆœŸòh…pÓ¾¼u³gÈta	º´Â"«×´¬¹ÉÙéù“SÓ–eFö Øó…Y&J¾,Èù8–7‹şJ­âY®g³k,° f4ÔeúŞ¤´XŠŒ´Y¥Å2]fsPªb1VEz1îÒÀ´© ¦Ãaml8Ã+n â±Š~¥ÊY ×•µY7c»•Øò~0ÃŞÅF’¸2·f…	*Œ¼ğdÕ
-ÀzVÍ(Ñ Ä¸êM1¤Å™à.[UY;Á
-„Ïg—™ğ¸ïˆgÔÔ,YÀ~•y;ÙÓ*“6©·õ>{«Üõâ}ÍíØMEwÊBL²ŞfÎ®Ö\Î¬%WœSmVfX“§OxÔó…»óÚÀŠ°uã–ãó²ê´¬Æ=Ëæ¾ÚnûkfëíeƒVÌ@ãcS{¢9zc×¸+˜Ùl„3ùı[x:ğK”Gÿ9Ö5Şl<İÆ¯ú¸<Í‰Ñ6¢díÌ[˜i Ñ*4ĞX½&Òş2„WCÜ¤ÚÄ*å®Ü¸jG7gãÌ+¢£³eĞÿ5<ä©6  Collet
-fstlib
-Fstlib
-LZ
-multithreaded
-Yann
-ZSTD
-fst-package	fst-package
-compress_fst	compress_fst
-decompress_fst	decompress_fst
-fst	fst
-fst.metadata	metadata_fst
-hash_fst	hash_fst
-metadata_fst	metadata_fst
-read.fst	write_fst
-read_fst	write_fst
-threads_fst	threads_fst
-write.fst	write_fst
-write_fst	write_fst
-‹      ‹àb```f`a’¬@&khˆ›®“ ÃÃÀÂÀ	¤¹ÓŠKt“³ÓS¡B<Éù¹E©ÅÅñ@9¨_J*Qf“'7µ$1%±$Iš##±8#¿Îò¢Ì’T|Ü%E©‰)ÅDjb`a
-0B%XósS‹šøÈÔƒù‰?s€ü£‡Æ'ÆÇzØ}Ìğ !Ñ(¾ì    ÈxœµQÑNÂ0íÆØƒ1ñ;´%qÀ«‰’ø¤LöFÊÖbµİÆZ7|ó_ø(ßı?@m±0yµÉº{NÛ{Ï¹7 -zoë´ïgã³ ş©¿p¢? ·{éø»d†‘çİë,ÉS–-uüÙ8ã°(Y….!ÍyJJ	ë5\Us4ŒDğ²øª®i-kºH¯egp¢DñÀÆTH'H¡!D#H¥‚g0ÉEQ)çš8Ÿ¤Úô±©}ù¶y¿z5ö÷Å'K'Ş·dçîvz'ÊÂ£-TœÄÿåäG¥÷eëµm½–îªk0q¶Ø¤1“°¸§˜ŠÂ¢°„_§ÖÁ‡¹×pÓ‘eb²4Šÿi•ÉÚ÷`?>¨º»`™Q*]?µt;b¥J¶xVÄ1“Ów—çÉÙ*ÿ_ƒÖ  åxœÍYëOãFwBÂ3\r×~\!U‚;‡
-ˆŞCíí‡«*årètBB‹½N\ü~äñ—÷ÛÑ{œ,®£Ê4>ió{×ëßÌÎÌíO«Š¢,(•
-üWATªÛç?6áè[8XT”2b	p#ÂŠ²xüÎµ{ğ}Æ™Ç¬/´ÀõXè›N‡]ÁŞ>dpâó‡ö)Óh¬ëÕ¥R–¦YléWï€$O^iŸ}j§Gúæ	h­Ç´$»Lø†ä7©«–à*Ã´ˆ+ño<¡pú''©ªšÅ}?Åg|oåKÜğ’Ò]zÔe`x+ì-ß¥˜–ß’ü6·p÷_ÔªÿºOšMæÕ£_~0…qåâ¬õkß´áÉ[³ã›É¥zép;Ëxd0DRqnW!W¬ßåÙòâzÜ2¹?…M‰p›äí[¯œ²^iušÉ&q}äShO$¤63’roó‰+¯NÏÈØˆM’›»AíR¾æ™½Àt)vFßR{g¨¶Şıyz–Ár‘‚&Aj…xÃ©è»Ã}iÅÙk¶ƒN°39	V…³}Öå~¤ó_Ş8ÛË­à™ñ”äÓÂ3DèóNV~]$Ë:Eíÿfˆ•x’1R›µç*Y›Ai˜“ì*­m‚ÔfE6“äÚ$—Õ@7iÛ,x·7aO!S"LÒÕÓ‚‚?·"©gR›rkd­Jî™Ş·:I›9Y×(>j4~)Æ™ÆÊBŠí”ä¶~ÁÇY
-hAyN9$ù°àujZšºï »Ÿ%¤Vp k®µí ‰#ÂW$¿*(–Ô:»€YgnTAéç	¶…ŞãNÛ<ÛÕ…ÁC+ØË›@Q…×„7$ß<V­Å®¡E²5/9
-IÙR›rëd­¿f]“JÌœ´ñai‰p“äÍ‚«k¹"68=A	½Îşı€]f:ÑÃ”Ç`¶k¹=Òu{˜{Ğgó¡i‡ö½Î¼1ˆÚo†$‡ƒOÈ{û$÷çÅÍ‘Ô@BjóAî²V‚_3+øT—“¯T²ÈeÿLƒ¯’âùß`„ˆŸB]c7Bg:xµ»¦÷úœĞ“¤ğa‹ÃGzù›`Ş…Â1ë„œd^]hÜÁœF†²×…œ‚ “h]¡İD*öq«7ƒš%óĞûl“WãMrGÄ’/
-Ò˜kÑs¬Vpu×l`İXAá ëB:QÆ­ëA¯•3¦İ³„-œ æøš«Ç=nYÂ‚òGxÑœûy•ß"…·h¹K.÷sßÔ²P–ÛÜÑÀÕÍ ô·,tƒH}ß•ònÒëcå9ÉÏk“ØÈ¼ ùÅ¼äa$µ/!µB-µzÉ½Nˆ›õ"{…L”¼ÄñÎ€£&½->É×XjÏ3û<jŸ{ªáZºğ|u0ToûWã#ûàåhxdİú`ÜÚøuµ­¶»×5Ï[¨8¯Ñh
-(|/šªá*ø¸*¿ˆ¬·ô)¼ËIÏdmpigÛ ;ÈWíÿÀ~Æ>¤„ëóÜá¨#œŸN ±0Ç˜€|‰]È©ù«øY&ù V¦“Kº«µG=A‡+xv|úOŒyoñ’ß÷´pÊìïÙe0!d;JŒËxünôåÃ•¬  ÊxœµQÑNÂ0íÆØƒ1ñ;´%qÀ«‰’ø¤LöFÊÖbuíÆZ7|ó_ø(ßı?@m±0yµÉº{NÛ{Ï=7 -zoë´ïgã³ ş©¿p¢? ·{éø»¤ÀœÈÆóîµHò”‰¥?g%«°"°Â%¤y–’RÂzWÕ#Ş¼¬£lUW´–5]q¤×RÀœ(^<°1åR–ŠF¤Ğ¢¤RALI’ó¢$RÎ5u>IuÛÇ¦úåÛæıêÕ°/?É°tò}Kvîn§7q¢,<ÚBu —ø¿zùQé}Ùzm[¯¥}ug±Å&™…Å=Åô\æ…%ü:µ|Ø¡{n:²LL–Fñ?V™¡}öãƒª»&ŒRéüÔÒ³Ü¡+U²Å³"	˜œ^¸»Y<‘­òoë€„¡  ¸xœÍXÏOÛ0vÚ¤”6Æ€s.“6i$Q`=M°¤ª›8TB^â”LùQ7mÿòİ`vûBÓh+K6"½~/rì|ùŞó³İËB¨Šd™ÿ*ÜEÊ×ÎÉö!¿{Åo–ª”8®MPFË·ˆx}JÂPÅ*ÅC5"&¨:tØµ7Kµ0ÃBr%Ñ¹Ö¶®îq/9¤Ü9¾ì¤Ÿ©I‰ÍÉ¬Š;Á[pü½T¯%ŞËv\ÂİŸhzİHü¨ÕÚMuPL‡aŠÏı»ÑíÔDé.ıT—9L¼J´VîRL%À&øÍésÕ»ßQS¼'Í&3,Ï­û°\Ù!Ëá,;nÌ`\|‚àoÇ8“‹Òõ±—%_$¸	şæ“–O†t”q½XÆ9é‡]‡9l$À-ğ·
-Ö¯’ÒOjäI6›Ûs$_ÑVÉd«¶PÉZôKÖ@bøZÉÁ_éZ$4©ÓgNàç¨+x¼û?) ´?]g°¬ÁT‰¬”XŸŸàoFo¦»B
-\½ôY>q/«JÖ€A½ÄWÿv–Or5`Eç!Ê*éÒhA²ˆmŒ`E‘EYŠéj$JÊÓ4r‚Aè“ÕiÒşˆoŠíıK]KWş`%Íd‚àÀSğOKß‰˜•5Ç‰àøg%(I{Dh¿$¬d¥F¼2à9øçe)µh¤.VªR.¦½G|–µE[‰¡'°>çÉ&Šu=e.ÏÚÃ}Yv|Ôm$ø¯¶hµn„İAVUYÏË	~úÀçád_ïS'ÂŒè¦º¸¡¡>é7Ñ•qĞôvöÇ£¦{3Œ~ØÃphßx¿z¾ŞÑÛÌë_;'¶Gt1®m’Ã80ö›‡:¯öº‡}}~§¥µ­æ•¸e?0œXÖ×@‰d¯w¯ÕÏÄ'”³·Ôïc•£qø»-Õ
-T?`*±&®±Ÿ_'Îø´_‰ÿ3°³3î¸]îMGèLÎ¹ğÅW¼DÅ…olKØÇ”X‰GâÛ_Ï#l  ÇxœµQËNÃ0tÒ„¶9 $¾£8•H›+Š8Ú"å†ÜÄ&q^6I¹!ñ“| ØÅ%ôJ$Ç;k{wf6ò  à8òïÊ¸wëÅ$À>Uàg'rYÀãıK‡’½Ÿ,Ã¼÷|tYÄeB‹TÆ½³Vm‘À°E$eà†ÃnëöŞŸl:{Şyİµ¤ã©™/¿´€k¸¬z Â0$4ÇÄñÔ÷çş,!á2T¨}R¡8C)>[&Ró±j}ñörõªÄ÷¸Ç9â†»­“ÃÛ›ÕuvPı—o–Ö§îçê~iªñ5VeÔ 4*‡"«tÂî­à]OÜê©ò&VUzÍÿX¥jxú=ød=ÚĞB1åÆOI=/òİ<	l2å«ss7/ãï˜¯”‚  TxœÍYİSÛF—!¾Ò–§{é„™Ë$!¿µIètJ˜ã¤)ÃL8K'[Xº3§ÃÆùÇûVz+¯°Pìtd¬€gß
-}ıvowïvõiŞ0Œ£PĞ‹Z4ŠêûOwõÑ*F0§ñaˆcNã³·ÙRÜåM²OEŞ3éRÏıB•+8yC%û’ú, ¤V6ŒB>ö„{5û³¢M-ÅŸ[¨¿ıTO^HK2G3z G8f÷PŞKÜUÒw9®Ç´ø1ø]=ñnµú<qCÑòh$ø\½Ûøw0à–Üeòªcå*xœÍ_&˜æ«(W×Í\şµâWïI²97÷@=íP«M›láÂÇ·µ_GĞ-€á—Q^İ‘\ŠÇ\{É29Ä”Wî®íŠèˆE¤;;]ºcOÆ°É!¢¢€S5^!a¼Üü8“£úIp¯Åâ˜ÉøÙÃwçÒ–dÔf6	’	Ë~G² ĞçlÈ]Î wãT‹‘ÇÚ5C.ó©*§Õt§ ğåÃŒ4=ª'Øêy¢7ÈÃ’r[ø„Z–Öô”‘Î½–kµˆE9i°¸AzÚn`ƒ´ZÏ¡¦!+”2ÒzãàèÑÊ‘£÷õ7Wä…RÏÕ<2Ü@y#ã@^8¶Y`I·î8&R€Ç}DSçÒMÃy!L¦{œ\û8ÁdMÜ€4(8«gˆrF^?yB<·!©tYPM«Ì´2à6ÊÛS¶øÊM-¾ˆVpÚ_Ü>fİvóGZBkÆ–¡LÜ GRZl)82İTÜÓ~ªq¦ÑXb¦i¨t()xsâ:ÊëÍêA·¯9WÔKØŒ(AzR;Ş…<LøëÏƒÀ‡-i.×í	Ìş‘¢L3ví Ğl!¢|šùNùÖ2Ä6ÊíŒ|cnÒ-óÊ*#’ä/í£ŠñĞ?EkolôÉ;*ÛäÏm§æ>¸f€erÛy~‰ Ş¹<¿œÀï‘çgôtšKˆ1ù¶’|¬ækØ’1İ’;~öã7“|´ÇÂ›üáŞ¾üuœ¥,Ğt±…r+#êğ7åœ¼ÇÒg°X$n7Äšw/¬&ğ{d ğ\B\A9ëŞÑ7Ò Vƒ!ÆäLæôÏIÒ@¢ÆæF?mP~kˆÊVFºnÆ¢ÿúÖ`ŸZ¬!D{‹üÎ­Ô‰aãpåÍŒİg6Lî—QÛEä°8ínÅjf •!»AîZ+Â,-wòKØ ì2@´RŞ+ïnAxlØ7!T2]IYŞ¹=,©t¹bé+ê½lAé5èBGÆfÆíô}·P_À”O2Ò½í#Ktú¾c.”k±Ğ mˆnÜØuÄ9gƒÔÚşˆÖP®e³6ÓÖõÁ`9ü”çÁUÃ³5?ÍÅïi›év©bf—JÓ­=Óì]˜gİÏ•W;şöËşÅwÖë:½ çœùıkr³nÖ”®Kİ}Çg&<×©ì²íJåUååÎ®©çÉô)7cvÊ5{í|tf8}¾¶®ôùÄÕ¥«E×ş½õ3ùq&µ&an—â¢ßdüY•Ø<0ÛUp¢¥—€ÄëŠğ-,ú™Şc«Şï°¨n.äĞ´×¦2úEÍkczSyì¬^~;:?h%®Ú¥3pİnvÛ€  ¿xœµQKNÃ0uÒ„¶Y $Îv%Òf‹•XÚ"e‡ÜÄ.†8?›¤ì¸‡bÏ8 `[´¡["97¶gŞ{ €ğ<õ÷UüÛÅô$À=ÖàwGj9ÀÃíKû’»Ì1'¢ó|p™'EÊò•Š?;g	,kÖ`I`ƒkH‹,%µ€íVÍš„|4~^‡YÕ6´-­8Rß*‡8“¼¼gSÊ	¤,#Ed„ĞÃR!!Ç¹ŞOg©Òz¨[¿½¾_¼hÕ»œ“ËÙ5ÉşÍõü*N¤(÷ˆÿKÀKçËôóM¿2ÓúJ¬¯ë2z %SÃ˜—&á¶©Qğa&ítÔôEè*æ¬Ò5óìÆ{Y–,×L…õSQÏ
-‹,eÍ–O’ØŒÇÄüÌŞÍŠä‘l˜†ÿ€  .ÉxœÍZmSÛF`v ¡ÍKJèÕNZÓ8¶!@R>¤)é—LÛá53!C„t2Jôbt'¿¼ß’îJ+[8ö42¾Ç³F'ñìíŞŞŞ^4MÓr9ø=¢6¾»óâÑ|»	_&5mqp&Âœ–|øÌ0¸Lg–Ì²Îû=‡ïo„0S—p1Ğ]®i¹ÑÔ­×¶ÌC©7@J?0·³ùj§»§Œ€[@e¿!·˜R„K$/uİ5w!!ÿÑâOûÜ;]__îºaÜpt!ºø´ÿ·ö!nxËÈÇî^Ò–i8ú±‹éác’ÇıÆ>şµñOşO7›F[ô!šÛÛÜú­Í10Â<ÉùáÑìÉeüÀk{Å'dF$®Ş˜åÈñrDsr¸4û8šîØºèÃf„ğ:É×‡<h×ºm¤ĞoÈ:³øÉo }•BjC#™¾º÷<àºäqh‚Hs±É?zÇÉä±.™¡{ì.GŒ›ıãV•íÛ‚îÍª1ùZ„{$ï)ÒxX¾!£¸gp&}PÕ”¡îÄZé	NB;à –çœÃÂÕ‡é®z’ùs¹ëçÕ¬êŞ"·IŞV¤îîş1÷b@ñÄ•¶Fá‘à/˜`Jß¨
-3y“{¦í5 k48®íÙnèâÀdUø6)‰¸Kò®"…÷]ı,â‰ÆãB‚Ó~‹y¡{ÄòRøiúBØèíGÜĞCÁ#ÛË³å.x?XÛo	f…“Uå;¤&â>ÉûŠT~€MÀp±uYÙö˜á;¡ë‰Ø‹A‡…ÄÅ…ôt0|f×ı–TA|JòSÅá|êÀäÂì¦´}¯O¼DßRjPıÜ >¾õü¯ß7{°Ä6™BjJb¹ÜÔå1ÌsÇ<$oŞ`/½ÜŞ\ÈL}‚qäyåkx(ôF¯Äç1˜ThîK¯á‘ß¦Ú°}Rë•¥åĞòùÈ¼…‹ò°øöä9ƒ<1.%aw ÎÓ„s$Ï)OÇmÉİ>d(×î‘|OÑôÎìHj>…Ô®¹T®2|÷tÁB'<fd=E“dŠúOÄ8Ô	Ó½èüébŞ
-éxÇ+Ñz
-|’¶@zÙ[ ‰f?˜`e|ps”èÄM+Ä·$¿UäDË†ïò é·l¨aS7ŞÃŠÀàïÁêÕµjã
-‹õjF}¦É×—I^ş¿ÂÇTŠÌ
-É+We†"®¦šÒ‘*èA#t¹'{íãó4D_iêbFî²ÃvC‹“”Uf|7ŸyÉ¾ö¥Qe¤;Cãˆ˜Ú+-(åÛU‡¬9)vš%,’\T>{ßì•’b§[„%’KWeöbŸû)¤¦8{?Õ°×Pİ ÏúZS7sÇ.½Y»«ÅùH‚Ô†Êrî³Û§´Š._H!5%^w¯ÄÜãA\+ºÛt:å’¬Ä¿'»#ªÎ•KÑ&ã×G>ÉëeX~›È¹¼PaÅ*hPì»îG(#–HV5Ûï´Èq?o¶¨0T'3ãÔ §S_8>õ!—ª((‰é«%f|VÁ;Äb·GvwVÅ~ e7HŞP¤ØŒ%ÑÉ“ºOfaÄµûu;s9ù‘%¨ÒCî”X3°=Éi›Ä¤n÷¯şöa\$–Å/0á
-ß²%3=¼”!^Êè÷‰P‚*>[b‚;ºëæYY? ¦ˆ³$Ï*b]9‹¦¼|½X__\®0£\ü›Kİ©îÛ¦<.Âú¶İä†ÍEqáMV=~"îˆ’+WÅ5~&B	ªtVbÉéá»®ï1Ç†´f,İÈ¼(”‰/"ÓÚAW	÷<øÆÎÖîffë/1Äd«Wµs’FiVè|"3İ_ˆ"¢Škúêm ûº¸Í›0Ï^r¯íMfÂ‰$bêlTUfp?1İ¬\S³ÿêeˆP‚Š	Œ|0ŞÙFæE¢JLU/y–±A’ƒCTò¬»ƒ¬±ú 9iÚî ‰brf©ª8ñ}11Ñ%"‡˜*«!
-˜hêAõDaúL4u¬ œha`–©óÛ€\&Lß“AØë}$$®jêƒzöÒ ²M!5¥£•?àgQÉ­×YÈ]¢'j†{u®n™ô¶pú£[ĞS]òÚ©Ô,ß1y j­³ÚÉéaıÉŠ»¸z~¶âœ´NßY-Ñ²NÜ:|^m§¶%İæ±ıÂryŸkÕ×øb½ş¤¾º²V³„¬¹º‡Xİ2ûĞM®t¼Ü…d'uì;Cê_Ø9=`P5ÓdGç°Ó;;‡Å|i™>ó|É¸iK¼pûÀ®çGóŒ8Jœ0}cç¼É{Q­Ô:cxÁfÉgì¥ÏfÈN6ÈTJ´¾0üá_iƒğ  ÄxœµQKNÃ0uÒ„¶Y $ÎN%Òf‹•XÚ"eW¹‰İâül’²ã.Š=Gà €]lÑ†n±gŞØyïMä zÀqäîÊ¸÷‹éY€}ªÀïœÈÏî^:”tìİdæçƒë<.š¯eüÙ9KaYÓ	TCRd	®9l7°j–ş$`£ñó&Èª¶y -oIÅ|¹Ö9\À™`eJ§„aHh†‰â‘ïOüqBÂd(‡)âéR‚óY"«¾—o¯ïW/Jú>ñ8CÜ·u²w;¿‰b¡áÑŠ*¢ÿRñÃÒúÒı\İ¯'5æbc®ÆªŒš‚ÆCAåDb¥NØm¢|èq[5}^ÇªJ§ù«TO¿ûñAÖƒÍSnü”Ô³Â 	QÓÕ“À&ãP>¿0w³"~Ä[æßÍ‚
-  ŒxœÍX[oÛ6¦9qÜÄÍÚm}åË€^œÈ.–ÄĞ‡usºY;xNQ .Ú¢lu”äPôí—÷­)Å²*¡Pg-@G–H}<7òğ]!´…4Mş–¤ˆJ—óÃ¦¼{(ov**,H<ğQC»ëN£L–ë`×ÄbDñˆx#%ÌÉOé@¸!­é¿İ6z‚¥Uë´Şuâoz|À©)ùì«;EP¶2à)È§±^;²—i1*ÅO(¸n¤Îôìì8Ö¡4`Äób|n¿>Mu)ÜÄßê
-K¨O©§Å›Ó`äfğŞÖÍ×¨•¾øNœM¢eÊJû=Ó)lµ·­öË®[µ}¬‚\]×D.¥®Cì$Åm²Şùş†*NÔ€ky½\S\0‹x)l
-€ ¬YsÅ˜æ
-•4•-ãy…ä÷àc!V×ëk+äY3UÖÉü ZVØ ¹‘³ı÷ºõÜ«É¤(XñøÚİxA©ıë›ßZ	,·!ZB„–‹ÔÂè~<¯aR¿À¯//.j¸ÏÜÁ?=ß^àNû²õ$óDv@Å
-k ×rO“’ç60(çhüİÿš|/ ´u{(JÊô…yF²°mˆĞÖE6‘d$#ÉTE^¸<#ÀÂõóÖ7Ì!lO–˜óún	j§) >ùiN‘ŸÙ5©g„¶äî¶BÌ)³'º¤¦òfF¾{.{«a”kè¼éÈ¥İÏñSÂ&›~«½å1aC—[bdá?LX6¨I&Lgc¸OñÄ£ÆÑ7Lyğ=Èïï*ÒöÀGvAînŠ3+R"m3Èíƒ¶Bü?#­²Ü”dd)İü÷wĞZ÷ÿ(iç÷§Œ"µqRQdË²ÅˆSbÈ8²ì1£6uÄÊ¶ûäçÃ¾%ğ|ş»Úuİ†£uYÍTR
-{ ÷rò¡«0#à×® Á²üÅöËl³òçù/·‚ŒÂ©§RŒå`Ã2MÊ¥b‚ÄOT^ÖL)ÑÈWw•iª2d²)Á¬Hõ#-WMUº„'Êù“
-õ]PQX¤ßi‰–¦¶ïPPF„˜g…voYi> ı)Œlr®¿|ª)JSæcÙø9*sFûŒô1·¦DP}J¸nºÌ ÜÓgsızÚ«ŸÛ“Åü˜]Ï¦Í™73¯íº¼†ŞÑÛÂ¬sÓ¦º×¬7i£^?­Ÿ7uY<ë6qô°’>j)œ‹á“¥ål*HdÑ; ¬”è?áWÔ¡\ò6p¹;_©óü.v\©!ù`Dœøø%ußÃC`Ãtc
-·»Ã`tu*rÅpáõŒ†Ög¸²å1§cÂÕ^úvw¡N:?ÿî"Ì  ÈxœµQANÃ0tÒ„¶9 $ŞN%ÒæŠ•8Ú"åV¹‰]vÒÆ&)7şÒGqç	< °‹-Ú+–âìŒíİ™İ$  t€ç©İW!ğïgã³ ÷Tƒß?8QŸ<Ğß¿ÔFzî>™#Eãyï:O‹ŒæK6Î\•´BÃ
-•,Ã¥€õ®«y8Šø`ø²‰Øº®I-j²æ¡ZËÎàDòÕ!¡“0Æƒ0…Ã(†DHÈQ9–(CÍq>É”éc]ûòmû~õªíŠOV¼kÈîİíô&I¥G;([œ$ÿåäG¥óeêù¦^GuÕ6Û¬ÓèIÜ—TME"¾2„[gÆÁ‡¹ÓpÓeª³4Šÿi•Î˜÷à0nUİ[Ğ\+¶ŸJ:+,
-”%]<KlŠé…½ËŠô	ï”ËÊƒ«  &‹xœÍZëSÛF—áQÚ4áÑ+3m:@hÉ¤)Ih:cœ6˜!‡t¶ÕX$áÇ_ŞoIoå–©_°gÎ¿µu'ÿnowïv­·9I’Æ¤TŠ¿§¹(¥ßTïóO_ñã’”Lpœq1ßIKF¢1‡*Ô¡¤fá`;¤¦6™$¥’¾Î÷*Ê…Cë\òß"U-¿­{Ú–l±ÿñ)ø„-‹¸†òZ`T†êı¬ôÔ{İÜé­ƒƒ½À€´Ü¤¶àsóÛÒ‡^ƒ!‰Á^çêx3L~0M ®£¼Şë7öñsÔÒŸüNMè2Lz+pÁUÁ8õg¹òKß1ĞâÊsÃãÊ%}®S-Lyc¨0@œ(àÈ*/…¦˜B¾Ùáò0=ÚT©Á&8ò¼híq¥<ÆÔ^5–	í¥QciÚK´—ÈE©¬H~ÃÛ}bIÿÕ£ß™Ó0R3,"7˜ü^Õëä’ÚªLLË0™å¨Ì&F8F`ùmæÛ1,¦U'1gö Ux„ò‘`ãM™ÔiDÅ¨Ê¯</G-# |"<`Ê†0ÄSÄ(¿dÉB\kV/_¡üJ°ª&ÏfË–j:ª¡GxØÖ·ˆØîÆÍ#vá¬±	Y×ÿ¸	.‘'FS¹à~¯Q‡üLŸ•·bÏ!‹ÚÜ@yCĞâkxy8l;Ğ°“¢†sÈ;'FÃèµMëa±(ƒ&zÖ½Ûn “ám¨$!Çˆ»İDñBÅNá2gz8,¾¡<g€'qŒ@"‹³×û(x‡T¦EI .¡¼ô¥£ĞijÙ‡ØFƒÜ}Ô–‡"ü9ÊUrığ“õ4:É4öÏôp¨“°}­]sO¹d½8wÄ|7şC0Ğ«6Q˜i1™:üŒLu…ÈT'†ŞìÂ`j)üË¸ë4¬ ß¡üNíÈ†Şâ'N¿­ò 34©üï„oó3—MJ…ıB	âÛ¥BÌùÌ ­î ¼sWácÚGfåİQñPè³çClB5•;§VıZcº–DO¢Šf%q1#s[µA™+ëC‘‡ë£
-s®-î”4Uî,®×ÀQ§È½¨À]†‡ 7f`òìåÒñ“h_Íl´“h¸QñÎ“h ñqô’h`õQ@=¸íP›¸Uñ¸–ç«˜ùÓ¡–7ÁwŸÏ”#xÎ". ¼pW$&Qâù–¬–—Qâ!5"ËlÑæu˜®æĞ¸¾–Äí0S·®.<ÄUô›]%gT3›7EØØl¡Iı{VÛùé±Ë´P³¨Æ6c³]@†_€í!ÇªeCfû`»”Mv	.Şj:2@ö3Æè
-gk»±)oV+oxF‚‰Éëg[yÂ§Ás³IeÆ;Âõ­øóò¥ÒÒ!Ê‡‚æµLÈ)u× guZ®VË•3˜ÊVüªÙ2Ò]”G¤.ù2òPd]r~•üeñÄÇ_ë‰M˜ I@ÿ›©nFÍcOØL7áuÀ>V
-¼ÃJ|“øyŠ.U?hƒÊİZ{'O¼	Åç¼‚<}ˆ¯"#EšñÂ*y®Ú< u?É¬bó^C®€¾FŒ%üñòÿ-Á÷˜‰K%3~Î:n0«<D?ˆY|èÕ¿ZQğ¡ÿ˜fÑ´ÔuX±E­bÍh*Ì²‹íNñªuQz²«mïu;»Í«vëïZÛn×®´ÕõbµXq4³¡×4V„ûÖJûl»TzRÚÛİ/ò%*jT/ú×­PQ"x'½+ı6ôU>gPşQùuòÓ™å–/»Ä2:İ:Ó< ŠAtÃ!LQ¸Ğ zğşix¬Æ{ )‰_fC®vMæ-\½wwÃê+s`ñ¼—¥á-Ş Ù¬É!Ôb|7EzxîçÃ¿!<iÇ  ÇxœµQKNÃ0uÒ„¶Y $ÎN%Òf‹•XÚ"eW¹‰İšÆùÙ$eÇ]z(ö v±EºÅRœyc{æ½7‘ è Ç‘»+Cà>ÎÆ! ö¹¿p&?8 ¿éXÒ±÷“b˜·÷n³8Oh¶”ñgël‹ŠÖH`X£
-’<MpÅa³e=÷G_6AZ6õixCJæËµÌàN+VtL†„¦˜ø!øşÈ!$\@†2(VF	ŸK|9I¤æSÕúúmû~óªÔrSÄw['»÷Ó»(ì 8"$ú/!?,­/İÏÕı:ÒTã/6şj¬Ê¨AhÜTE Vè„İ$ZÁ‡¸ÕRÓåU¬ª´šÿ±JÕğô{peİ[ĞL1åÆOI=Íò]<l2åÓ+s7Íã5Ş1ÿşJƒT  AxœÍ[ûWIn ÄÌîòJ$hHÀ³.8?¸
-³ sØ¸3ss Ò]Iú»:	ùË÷·qïíÜ&¦g­Ğu€sÚï‹étî«nİºUùuÒ0Œ1#“³@ìÇÒÎÚxõx1a£ˆ#€SfŒë€/!ó&Âš`^Ã-‹€ùxnIÖÂb¶Çê<à#æ×EÀCÛ÷¤adFcÏº¶o†¼
-,ş™Òö¯¥ş;e`¢²İÂW(lGÆ_İ÷©qøTÅvĞÿ¿³
-¯¹¹ù¼ïYÓáRöÉsöİÆ?2ò¹ÿ®ƒĞñ«ğİÑÏ}’¾!ş¦sßØçÿ'Zö‹ïé—f —n3+2L8óŸíıwG8M|:=qÊ’=ğ¸;Èvcd/Äoˆsum—¡@Ì¸éŠ›xÜ±¹Lf„ELÕx7ûŒ72™d²Ş¨>'ä\·cHWjBÆß-ï@â–òQ&ƒ—?p¹g
-fKf‰P®íA2}ÆY‚"dâ4ÅÊíÁÉOUûyrb™xY“ö&æÛóq–«[¶ã00‡ßŠôyıóGT–,Á\¼Õôİz#ŒÅÈë ¿´›ğ.O$“¶ÛpBî	¿!v^UÿoIgD‹¸¥I!ëBX¶Wez¤íY ØG‰ÿïÆMÃé£ºo5Lšú.|¤)‚¼wA0DÖ“&wĞ°†U5À]RQš`«¬Tğ)P>ÿ†@ë¸ü|ëÆbœ7¹íğ²Ó³ÏÁT-Ş–Ã¨TF4‰›šÔŸ­p
-‚'FÇí¿ ×E¾Ob"ÎŸ½ü))»ÿúÃ›íysÄsÚçsÓ·Íç(Äá*ñUMşş{B}jr•ãÖqâ!Êîx#…@9£	'ş»&}–!™vÅ6Y >5ì@¸Âe½‚\³U…C"Î«FóE0â2ñeÍÑ<6D£|yÂñÂeE1
-ñˆ°H¼¨Éë˜èá/¢ fd
-ß³·UC•X'<"~¤I™û_µa¾„¢" ¥`‘ˆ¢Ë6ŒC· *ø"…ë¢q.)k‰›–f`×qşH¨fQFHWªÃiôkKîÄÁ„×DéÒâò­ØÔ•ó‚C¿rØßØû»»yHgR„‡¼õö!T!'ôÆª²^ãdqÄ-â[Ú—_É«ƒ²Ä5’`Bc,\»èò+
-êÒ•vÀƒæ[çÂAQğIòó$=|ÜHuq=3Ó'ğ½/s0d_ÈÏØBşÂâš'Ş+ÕA…¾ Ü"®{P%Î¼(ÄSÂ—Ä_jÊ\tn•Úœf# ÜJnwª<ÔàÂcâÇš4™Ç5ºİ„í5>
-ŠBßèU„±Ö…æX°¡:H°`W˜XA‹•ó*
-u7†t]án’µº¨©J˜ô§úg{EÙÇ	gˆÏ¤œ÷gûdÎ¶jÂcC:OxŸxŠåij++ÄïtYùqp…øŠ¦aól_ÏÃ,E8Ãp„üX|SHê
-GÕæûuáíıŒİÕá†˜#<"~¤I©%ÛÔu(;Â•Vòá…hâäúH¡Ü"¸İ	´—ˆ/]Á@Fùæ‰ç/+oÓHB\#¾¦Éç/™lÙ¡	Îeen`Ù‚]\GDËlŠà(…Ùa´­a†’¢]yÑúmâ¶&½ÌW8ID£eÍ'ôóp‹h;ÚW°­`‡6wp‹:;Ø¿ü€ Ï|¯ÓÆÇ=Û¢ßw‡âQw¿z/'
- ü[/Îj|Œ¹ªëä¨ª[;+ë\ˆÄ¨¹éD`)2À/CÌ^S¤âñ=ÍƒşkKƒÄ€7•Mâ)zG-àMï	-âº¶¶”+@¼GÄ.-ÂMÂ ¥á©(å4b·ÚŸÔ„ÙW»ÿŞV¼éØõ·^Näá—ß œ!b‰|Î\£ÊåJ5K8G|î
-–(ß"áâ.Ó¥ó„‰?ÔäÒœQQ	±(î}“?7/3áY¸u~²VÍH¨ÙaxM“†›±~N¨İA3´›·y•ƒî.÷ÜqÚxÚÃ‚·*j;³dlßÔìÙ,F9_¾#şî²‚…Ø"Ü%¾«)$îvNp@ ğ:¬ê«¨&wÊgPÜ=Â*ñª&±3õÎsì(˜;"¦5&¿ªÕŸ•øÄÆYo&â)¹P‹J"K8G<Íù+şîèlNwsŸå†ğô<á
-ñ4»)ƒ<=›°›7ŒÏ„oˆ§xjVİç9ÂmâÛš|¾¼Š¸¦½	¶,j¼iÃHoxf{Ua©6îQğÂcâ)î6$X3¡qËè% â'Wee„B91¤K«¥&xPmDÇyHtLôWBİúÛ5VÈ“1¤K‹OŸ”ÏuE‡6¡”ÃõfkˆÃ}É¾ˆOˆ?Ñœ1çüè4‰ÌA½?±ªš2Qè§„o‰¿½¬”‰Bä	"ş“®E¨r¥zG¸K\WiyôşCi{&rXVu\,ßƒ…úºÓ™ só„WÅŠdøk	/£ƒè;!s|\å;Qmú.,N LûD¹>õğ£íˆ#İíˆA1>îØå€mÕÆ¶ù¸ÑÛ ¢¿Ë	éïÈXİ¾>mŠ\‘¾
-Ju‡pŠø”n·ÒIÔaÜ:KØ=G­ûèŞŸºušpø‚&·fóCBÁ	—ˆëŞ€İÜÆ©	ŸOqîTwj÷Ê÷P‹S×
-ìm…µıƒ2]@‚i½İ9ä{¢S£D;¯pj¶¦Ã#ş›&E®»˜iğ<›¢±“ãgåêuÍz‘6×2İˆø-ñ©…*
-1Ix—¸®£B‹ÑæpÒOw•Ë(ùá&ñÛ›e™8°DÈmgĞRéÅŞ#CßRiô¢K%Üšˆ¡ÎÓ×¹Á[æ9<bG?Ù[ò”ª3d\Äqİ?*ºvµc,J?ÃÒáv¼«÷î¾E?)æ¤X¢½ƒb“ÅŠïX"ÅÖiñSópıù3wãûöé3çS«y\iÉVå“»U¯X*î‡n½fïT\QÄçVÖ_ˆõõçëß?{Q„ÌV„:¿Ët…}+AìÑî;=ç¹0PbÇñ¦ÈñOå—ÙÂÃó "úUkàŸ¶«Â{ºÉ,?úmŸ°ìß¨Áz£ïùÙh™Bí–„–o–ÚuÑRª§ûAÏ–ç|×ı[!¿éùîœ°òuÜŠï6 ğWåüE+  ÅxœµQKNÃ0uÒ„¶Y $ÎN%Òf‹•XÚ"eW¹‰]q~6IÙq—Š=Gà €]lÑ†l±gŞØyïMä zÀqäîÊ¸÷‹éY€}ªÀïœÈÏî_êJ:ö~2CóÖóÁuç	ÍÖ2şlQXT´FÃUäi‚+›,ë¥?	Øhü²	Ò²©IÃR2_®up&Xñ@§„aHhŠ‰â‘ïOüqBÂd(ƒME^Jt>K¤âcÕøòmû~õª´2SÄs['ûw·ó›(í èı—Œ–Ö—îçê~=i©qw5VeÔ4
-*G"+tÂn­àCÏÛj©éó*VUZÍÿX¥jxú=8Œ;YV4SL¹ñSROsƒ<$DEWÏ›ŒCùüÂÜMóø	ï˜?Ş‚’  \˜xœÕ\ùwÓHV“B3d7Ì6ÉëØ	“a™ ÉÇs¾¼‡;r;‘%£ÃqøÇ÷·a»Z%»cì™éàvï‰¯lIÎWÕU¥êKoGÃ0ùÿ	.‰W¹Í¹şéşá´aôöqœ8hŒpœÊ2Z Ô)Ï
-)ú)Z6óÓ†1Ø/]x*[øĞ=.É·æ6Şæš¯ô=ÓcEş‡Çà?†¥ƒ4ğÈ]Cü.øÃ\üŸı«ÿ sªkk+M7$L›ú~Ÿúß6şˆ¸¥ïKóU;ÀŸ‚³ı_š˜ö!^AùJtİÀ—¿¢–øêï4³iÙ#Âò¸åÛĞ|½‘½ß‚ì ˜qåñÎ‘mÉ%±ãĞr+Ë µê7ìMËbâõÃ%ÛÆé¨mQ¿›>Äs(ŸëŠéÒê¦K ¹=aºš+ÑEÓ{<eÃéâü8²îpmo¹Sh­SF÷âUXî>7„Öê	Ë¡µ†4Zn¤Ér}£íLÖx !ù+?ÎJˆGÇHÊg6ÕPRôøsÂçà–Å©À%üKês~àzt‘d{B~V”iUıÖÑğ€Q~¨I¿Âºm»\×#¦[®xÌ÷-×j%=±Y•Ù³Äãß€º¦É¯ n‘€ª¬ ’"üçÈoàŸ¾²ş÷QgÀÊMúï>íÀªp=ƒD°O¨ÇHüy«º»µR²öJ$Y`s³>ó,;Ÿi Fò+Œñ;vÃ€PÛ&»ÔÜßóÜ<¢ñcªÚ?@wQŞÕ¤}Öcs]ËáÚî2Ş|ŒäëeG^ø@>~ ä‰Ç‚ĞsH5‹C"²˜Ğ]›Í*·µäßFå¬&m·Ş”¸—†¾åìñxÍƒ¦í<oèÌ„çkùo?FöÙ!IZE®éá,±|~Í¼*+¤T•Ü@Å ·PŞÒ¤ä
-*Æ¹bÕõŒHåÚDÂ€:ºòÙwOYPr¹wIn'¼PöJîmìShU©Íœ ¢4?zå‹£ÏIˆMŞ˜ªJÿ†Š¾Cù&¥/s¯+3ø‡N@kèiEæñìªO,àe”/k.'Îì˜ozV’b›çuŸäúxt´¨˜ü»EE"ûàùÃ,E'!ZšüNİŸ“µ©Ğ ”ª?9É]²8Ÿ"¡c_|`é œï’\öÕÆ¬²^£hqÀ;(ßÑ¤—ºÕO#£;í_[=İ«ŸA]Îô¤ÕÇQŒ:­>§ò¤2Í³HíìQ7ÖBs˜D¡Lr‰Å7bÓBò<ák‡eüõÙ«ímuºR¯Î8òyMtÏ¨t—,¨•†<ähÒBtŒ@q\“Jf”#KÓ)B¨Ÿn”®œôæúöËuÖ8ˆ!p
-å)M¬/âÚ<	ğÔJƒ˜²2ã‘%à”/hbÜ¯ò%JF?Êı=“ò'‘QŒÚS~úX)ÿH°gSş?‘àwò¥èîí”ÉövÊÿ	Ù~?)ÿ2½d|/)_êÂöbÊÿ)jHù-ÉœÚ	}º×jšrüËĞ“âˆşÛï‰ÅvŒxt”$4E«9š¾š"Yï’N‘mIò2•& GE\(Xşş1E¼†ò5ÍšØá|ËmÈàè¡qåëİ.şÌRI	ñèrÓh­uDv» „I‘ïÆÊºÜÑÑ*®%Ï	à	a/ó9ç1ÄK(_:©P™ÁFÔ0ŒûmŞ¤~–Ş ÷o´VŒİ•áx4Q‘óUÀ³(wpBÛ@ÎG¸>®R;dÄrÄ\—G=Fæ!|æçSüë‚eÒ F@á4-»¡ÀL’<GÌ/}õémĞòâ{”ßkrŸÇÛîóˆĞÕ'eFbSo%æ¶}ë3óÓ$ÇU,°"íàˆ‚–O|&¦˜çÓŠZ^Cß|Œòã“J'W%2OP~Ò+¤¶%Ä£7ÈIuJ×ÓÉDól„"w(a†'QìpZ9ÕÄùÍV‘äaÊ$Ÿk"Ìõ¨@23p=ŸX°T‚çßËÑ2‹­2ÂlVfN ğç8ûR›ÄŠ+çPy
-ÑEÙÕäS¤ú„QÒ†´¹"¯r›+ÄõˆÃ?WÙ,$OH¥EËãõ‰ã:sÏÖc#›ˆE'Ôoü¬F€[J.ÏUÑ(²%fÑi”M–XÊ•,©9eÏƒe¢©Åì°Ğ©ìrpm‰I}¦¾<èj¸„ò’&lpgÃtÜ0yéÁãÜÙ—ø¡Y’uQ¦&V&@@Hn5]§Ê`y†ªşƒºÚ(Ûšì°ÏUWô¡OZJñàäşáÍMB‰Çláíö!aµ
-s|.·Â¼h½”X3j{¬š{¶ü´%rø7\P5C
-UÜGy_“Î7ÒÊª–sÈPÃX¬ZY”ÈHÓA½ñäR?JˆGoK£µbìfY0„®§H9cD àÊ²nIuõ J±^–ç11t¤Ş¶êßGõÂñÂ*ƒ×>BùÑI…Upå­^ñ\ õXB<zƒÜ<Z+Æ®sÁ¼•"ßŒ#Àns%ÅŠt1DìÔ}t1å@ñå¹Ä	Ë»ÌS!Ğañ6Ê·O*„°ñQ^ì/RKâÑän¢µbìfõ®"Û[4€ñ.˜Î¤·dIVHè–ıUì´{DalSŞƒË±S'í…àıÕÈåO#î£ÜÁ
-V-òn¡Ï êîU(;7*KˆGo»ÖŠ±›‘7vd…€"ñE¼Eüñ!££İ £Õ¦¯¼cÃDÑVùhq—8Úi†Prm&ï¡|¯ÃÍĞlşÑ¿´}Û%@sñ9ÊÏµ?ïÀ·ZA $~E|òMñ5…›nÒdİ9„Í6Ñ˜Šë¨ÆıÑBÙÒDzS¼ªSJãTZVŒ)­vhë‹Àn\B<NÆÄâÊššõ}¼ıF¤  –2…íqPÀWc³dëİUb¿ct­+U´=‡øåš´ñ`Ï½ªŞ¼Œ¼l4ônŠ]Æ§Pîà²75·£ˆQ¾¨-ÅV¨¹^ÊëÖ]˜ìå=FÛæî|Œÿ	ñÊ·NªBûƒ@Fª¹z£\F‚1âÑäVĞZ1v³Bm¬Ud½jD%é*^ï&èhyÚßÄöY9ä=<2ÑJ[Q¤rêk‹®kåy¾À*3)<`~Ã¤¯aìÃèé½;@µV‘`å¼&'º]ŸŠ&^AÃ8kğïa„OæÓ+i±8„åµkèkkz"V-}¬Jdznh	H-IØá¡¥–\Fw¨·ŠIÉŒš(ŞÄ¨#g|«Ù~1¢²:F{w_|õJè¤JKvE‰Q!fóş¬xäiyC»ª®w± _ ¬«fâòµ|ô’ñZ“(‚2–Sµ|k—g»ØpeÒwÉ¡ŠTÓübp­:¦˜¶ş;«Âl^X«opÿ/ªh¢ljS;bYÇ÷4FÇøß¶0Ìñœ–-.sn†¼¤ex¡
-ö‡”ÙJÔ´¼÷J>›«‘_æ¢÷bˆàM®ÃÎ¥µ…ùyXyŸğ…2I3Va=ğl}6Eğ*Ulj²x«¸ú.’mT0‡r®ÛO¤¶ì"£;íâòÙÉòğëu˜Ê”Ÿ!M@iß£Ê×yFü "w$^qT@oNb5Ø÷4û §Õâ9òÔ½YâÆ‘×QÄ
-Í2½/ÓúÌÖÈÂ2yr_Yé	%/ÜÒ¢FòÚ şº†3Q%ïÊJüÄã53ºö†ğxJkV9,SHïRÒé–î#òcİ‡^
-º}z‰ô¥u7ß—Iy]»©çøWÈ(F9~b†dåwÉ)“}_×oĞ70¼ÚÚRdúştİ)¢:j[±ABÔúÊZ½AM ã.êª&­¶Ûjµ>Š6€Ü„Øııê}eEß¢r€Rå£µ€Ùa5QÇµêáÆ»3â÷|uØùáªÆÙl_-ßce*U¥ËT©—)ºvy~æ –ùTı0¿¼X^X:¬-ÚŸª‹şAñS
-Ï='“Ëdƒr¥dmË,¿[œ_a¼ù–ç—W2¼Y3eêdêÙ9-´!İŸit¿Ê, ÒŞA¾+u•üÆXÜïä}@·v¸Çœ›k¤àÇ+Xœ(qgiúı„Xˆ?Ø_\3wXaq«íE¿îzKi¹øß{l5£s-w„ì0W¨Çàe”ñnxôÿ8
-œÕ‹      m‘AJÃP†'MZ›4jiİèBW
-.
-F­–º¬èZÁ<“©)šX^B]t!@ñîİx/ @O¡N’†ÉS“7ßÿæÃ?' è`ô/S
-åã£^«Pj¦ÙY¥˜¦(h Æ'óÔ˜ÊšÌµWê1ÇÜX¥šóÂ-½Ÿe^z§ú'æ•7 ó‘Ùy°Ÿéå f2d(Œ(©§Ãe¢í^C‰QtÚâ‰6ãá?jÒÖP¸â'’Î·U_D~¡Ú0ˆE±CìK^±©y-1¦À×_ã’/1/çŠC|Èlİï1×?ˆw™çwˆ{Ì‹j¿å;•×nˆ÷3ã´ï_^U0u»Bë
-m(´©P[¡-…¶êd^€•./e=7o$ä@œ]ÒR3Á’ØG‰¡ËJ¾Hô’¦?ML­¹  ‹      ½Ò_KÃ0 ğs¶àÁ/2/{èÖO°0&øä8ÚË×tmšùåÅC&Cñ5.÷çåÉ½ÜÀ-…Ü¥”P>ï6‹`ö(Í0—ÜáàíD‘q"úÔµì¦3Ó^­+·\½Ÿ«nLÓ›N!éÑ)9‡w¸n0v££¶kUóR©µZU5êÑQÍÉCØËàiÛ^Ì>«Ùòßê1«*y1Ps¤_É&7y¥LVÊP0?_3ïŞ8ÔR¤ÿüÁh<SûkilV2yù„b&àÍ.µõ!Jñğ5x•øøéOÃøÔ  <!DOCTYPE html>
-<html>
-<head><title>R: Lightning Fast Serialization of Data Frames</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-<link rel="stylesheet" type="text/css" href="R.css" />
-</head><body><div class="container">
-<h1> Lightning Fast Serialization of Data Frames
-<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
-</h1>
-<hr/>
-<div style="text-align: center;">
-<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
-<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
-</div><h2>Documentation for package &lsquo;fst&rsquo; version 0.9.8</h2>
-
-<ul><li><a href="../DESCRIPTION">DESCRIPTION file</a>.</li>
-</ul>
-
-<h2>Help Pages</h2>
-
-
-<table style="width: 100%;">
-<tr><td style="width: 25%;"><a href="fst-package.html">fst-package</a></td>
-<td>Lightning Fast Serialization of Data Frames for R.</td></tr>
-<tr><td style="width: 25%;"><a href="compress_fst.html">compress_fst</a></td>
-<td>Compress a raw vector using the LZ4 or ZSTD compressor.</td></tr>
-<tr><td style="width: 25%;"><a href="decompress_fst.html">decompress_fst</a></td>
-<td>Decompress a raw vector with compressed data.</td></tr>
-<tr><td style="width: 25%;"><a href="fst.html">fst</a></td>
-<td>Access a fst file like a regular data frame</td></tr>
-<tr><td style="width: 25%;"><a href="metadata_fst.html">fst.metadata</a></td>
-<td>Read metadata from a fst file</td></tr>
-<tr><td style="width: 25%;"><a href="hash_fst.html">hash_fst</a></td>
-<td>Parallel calculation of the hash of a raw vector</td></tr>
-<tr><td style="width: 25%;"><a href="metadata_fst.html">metadata_fst</a></td>
-<td>Read metadata from a fst file</td></tr>
-<tr><td style="width: 25%;"><a href="write_fst.html">read.fst</a></td>
-<td>Read and write fst files.</td></tr>
-<tr><td style="width: 25%;"><a href="write_fst.html">read_fst</a></td>
-<td>Read and write fst files.</td></tr>
-<tr><td style="width: 25%;"><a href="threads_fst.html">threads_fst</a></td>
-<td>Get or set the number of threads used in parallel operations</td></tr>
-<tr><td style="width: 25%;"><a href="write_fst.html">write.fst</a></td>
-<td>Read and write fst files.</td></tr>
-<tr><td style="width: 25%;"><a href="write_fst.html">write_fst</a></td>
-<td>Read and write fst files.</td></tr>
-</table>
-</div></body></html>
-@media screen {
-    .container {
-	padding-right: 10px;
-	padding-left: 10px;
-	margin-right: auto;
-	margin-left: auto;
-	max-width: 900px;
-    }
-}
-
-.rimage img { /* from knitr - for examples and demos */
-    width: 96%;
-    margin-left: 2%;
-} 	
-
-.katex { font-size: 1.1em; }
-
-code {
-    color: inherit;
-    background: inherit;
-}
-
-body {
-    line-height: 1.4;
-    background: white;
-    color: black;
-}
-
-a:link {
-    background: white;
-    color: blue;
-}
-
-a:visited {
-    background: white;
-    color: rgb(50%, 0%, 50%);
-}
-
-h1 {
-    background: white;
-    color: rgb(55%, 55%, 55%);
-    font-family: monospace;
-    font-size: 1.4em; /* x-large; */
-    text-align: center;
-}
-
-h2 {
-    background: white;
-    color: rgb(40%, 40%, 40%);
-    font-family: monospace;
-    font-size: 1.2em; /* large; */
-    text-align: center;
-}
-
-h3 {
-    background: white;
-    color: rgb(40%, 40%, 40%);
-    font-family: monospace;
-    font-size: 1.2em; /* large; */
-}
-
-h4 {
-    background: white;
-    color: rgb(40%, 40%, 40%);
-    font-family: monospace;
-    font-style: italic;
-    font-size: 1.2em; /* large; */
-}
-
-h5 {
-    background: white;
-    color: rgb(40%, 40%, 40%);
-    font-family: monospace;
-}
-
-h6 {
-    background: white;
-    color: rgb(40%, 40%, 40%);
-    font-family: monospace;
-    font-style: italic;
-}
-
-img.toplogo {
-    width: 4em;
-    vertical-align: middle;
-}
-
-img.arrow {
-    width: 30px;
-    height: 30px;
-    border: 0;
-}
-
-span.acronym {
-    font-size: small;
-}
-
-span.env {
-    font-family: monospace;
-}
-
-span.file {
-    font-family: monospace;
-}
-
-span.option{
-    font-family: monospace;
-}
-
-span.pkg {
-    font-weight: bold;
-}
-
-span.samp{
-    font-family: monospace;
-}
-
-div.vignettes a:hover {
-    background: rgb(85%, 85%, 85%);
-}
-
-tr {
-    vertical-align: top;
-}
-
-span.rlang {
-    font-family: Courier New, Courier;
-    color: #666666;
-}
-
- asm    dylink.0¤$ T``` ` `` ` `` ` `  ``ó éenv_ZN4Rcpp8RostreamILb1EEC1Ev  env_ZN4Rcpp10RstreambufILb1EEC2Ev  env3_ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED2Ev env._ZNSt3__29basic_iosIcNS_11char_traitsIcEEED2Ev  env_ZN4Rcpp8RostreamILb1EED1Ev  env_ZN4Rcpp8RostreamILb1EED2Ev env_ZN4Rcpp8RostreamILb0EEC1Ev  env_ZN4Rcpp10RstreambufILb0EEC2Ev  env_ZN4Rcpp8RostreamILb0EED1Ev  env_ZN4Rcpp8RostreamILb0EED2Ev env
-Rf_install  envO_ZN4Rcpp8internal2asINS_6StringEEET_P7SEXPRECNS_6traits21r_type_RcppString_tagE envC_ZN4Rcpp12RObject_ImplINS_15PreserveStorageEEaSIP7SEXPRECEERS2_RKT_ env_ZN4Rcpp6StringD2Ev  env_ZN4Rcpp8RNGScopeD2Ev  env6_ZN4Rcpp15PreserveStorageINS_12RObject_ImplIS0_EEED2Ev  env_Unwind_CallPersonality  env__cxa_begin_catch  env__cxa_end_catch 
-env	Rf_onintr 
-env4_Z29rcpp_exception_to_r_conditionRKN4Rcpp9exceptionE  env
-Rf_protect  env_ZSt9terminatev 
-env'_ZN4Rcpp8internal10resumeJumpEP7SEXPREC env*_Z24exception_to_r_conditionRKSt9exception  envR_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEC2B7v160006IDnEEPKc envW_Z19string_to_try_errorRKNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE  envC_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev  envRf_lang2 envRf_eval envRf_unprotect env _ZN4Rcpp12Rcpp_protectEP7SEXPREC  envB_ZN4Rcpp15PreserveStorageINS_12RObject_ImplIS0_EEE5set__EP7SEXPREC env_ZN4Rcpp6ShieldIP7SEXPRECED2Ev  envRf_mkString  envRf_setAttrib envstrlen  envK_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6__initEPKcm env?_Z31exception_to_condition_templateISt9exceptionEP7SEXPRECRKT_b env,_ZNK4Rcpp9exception21copy_stack_trace_to_rEv envD_Z31exception_to_condition_templateIN4Rcpp9exceptionEEP7SEXPRECRKT_b env/_ZN4Rcpp8internal18isLongjumpSentinelEP7SEXPREC  env-_ZN4Rcpp8internal16getLongjumpTokenEP7SEXPREC  envR_ReleaseObject envR_ContinueUnwind envc_ZN4Rcpp8internal26primitive_wrap__impl__castIiEEP7SEXPRECRKT_NS_6traits17integral_constantIbLb0EEE  env._ZN4Rcpp8internal12primitive_asIbEET_P7SEXPREC  envR_registerRoutines envR_useDynamicSymbols env5_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED2Ev  env_ZN4Rcpp8RostreamILb1EED0Ev env_ZdlPv env_ZN4Rcpp8RostreamILb0EED0Ev envR_GetCCallable env_Z13get_last_callv env!_ZN4Rcpp7ShelterIP7SEXPRECEclES2_ envY_Z21get_exception_classesRKNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE  enva_Z14make_conditionRKNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEP7SEXPRECS9_S9_ env_ZN4Rcpp7ShelterIP7SEXPRECED2Ev  envRf_lang1  env%_ZN4Rcpp14Rcpp_fast_evalEP7SEXPRECS1_ envCDR  envCAR  env._ZN4Rcpp8internal17is_Rcpp_eval_callEP7SEXPREC  envRf_allocVector env	Rf_mkChar  envSET_STRING_ELT envSET_VECTOR_ELT env)_ZN4Rcpp13unwindProtectEPFP7SEXPRECPvES2_ env
-Rf_findFun envTYPEOF  env	Rf_length  env _ZN4Rcpp8internal3nthEP7SEXPRECi envmalloc  envR_MakeUnwindCont env
-saveSetjmp envgetTempRet0 envR_PreserveObject env__cxa_allocate_exception  env'_ZN4Rcpp17LongjumpExceptionC2EP7SEXPREC env__cxa_free_exception envR_UnwindProtect envfree env__cxa_throw env
-testSetjmp env__wasm_longjmp envRf_inherits env
-VECTOR_ELT env	Rf_nthcdr envw_ZN4Rcpp6VectorILi16ENS_15PreserveStorageEEC2ImEET_PNS_6traits9enable_ifIXsr6traits13is_arithmeticIS4_EE5valueEvE4typeE envG_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEC2ERKS5_ env­_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE16create__dispatchINS_6traits12named_objectIA1_cEENS5_IiEENS5_INS0_ILi16ES1_EEEEEES2_NS4_17integral_constantIbLb1EEERKT_RKT0_RKT1_ env _ZN4Rcpp20AttributeProxyPolicyINS_6VectorILi19ENS_15PreserveStorageEEEE14AttributeProxyC2ERS3_RKNSt3__212basic_stringIcNS7_11char_traitsIcEENS7_9allocatorIcEEEE envi_ZN4Rcpp20AttributeProxyPolicyINS_6VectorILi19ENS_15PreserveStorageEEEE14AttributeProxyaSIA17_cEERS5_RKT_ env4_ZN4Rcpp15PreserveStorageINS_6VectorILi19ES0_EEED2Ev  env4_ZN4Rcpp15PreserveStorageINS_6VectorILi16ES0_EEED2Ev  env@_ZN4Rcpp15PreserveStorageINS_6VectorILi16ES0_EEE5set__EP7SEXPREC enve_ZN4Rcpp20AttributeProxyPolicyINS_6VectorILi19ENS_15PreserveStorageEEEE14AttributeProxy3setEP7SEXPREC envè_ZNKSt3__211__copy_loopINS_17_ClassicAlgPolicyEEclB7v160006IPKNS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEESB_N4Rcpp8internal14Proxy_IteratorINSD_12string_proxyILi16ENSC_15PreserveStorageEEEEEEENS_4pairIT_T1_EESK_T0_SL_ 	env‡_ZN4Rcpp8internal12string_proxyILi16ENS_15PreserveStorageEE3setINSt3__212basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEEEvRKT_ envr_ZN4Rcpp8internal28make_charsexp__impl__cstringERKNSt3__212basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE  envI_ZN4Rcpp8internal12string_proxyILi16ENS_15PreserveStorageEE3setEP7SEXPREC env1_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEEC2ERKi envª_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE15replace_elementINS_6traits12named_objectIA1_cEEEEvNS_8internal14Proxy_IteratorINS8_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ env§_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE15replace_elementINS_6traits12named_objectIiEEEEvNS_8internal14Proxy_IteratorINS7_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ envµ_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE15replace_elementINS_6traits12named_objectINS0_ILi16ES1_EEEEEEvNS_8internal14Proxy_IteratorINS8_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ env@_ZN4Rcpp15PreserveStorageINS_6VectorILi19ES0_EEE5set__EP7SEXPREC envÓ_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE25replace_element__dispatchINS_6traits12named_objectIA1_cEEEEvNS4_17integral_constantIbLb1EEENS_8internal14Proxy_IteratorINSA_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ envĞ_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE25replace_element__dispatchINS_6traits12named_objectIiEEEEvNS4_17integral_constantIbLb1EEENS_8internal14Proxy_IteratorINS9_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ envŞ_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE25replace_element__dispatchINS_6traits12named_objectINS0_ILi16ES1_EEEEEEvNS4_17integral_constantIbLb1EEENS_8internal14Proxy_IteratorINSA_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ envß_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE37replace_element__dispatch__isArgumentINS_6traits12named_objectIA1_cEEEEvNS4_17integral_constantIbLb0EEENS_8internal14Proxy_IteratorINSA_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ env_ZN4Rcpp4wrapEPKc  envJ_ZN4Rcpp8internal13generic_proxyILi19ENS_15PreserveStorageEE3setEP7SEXPREC envÜ_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE37replace_element__dispatch__isArgumentINS_6traits12named_objectIiEEEEvNS4_17integral_constantIbLb0EEENS_8internal14Proxy_IteratorINS9_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ envê_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE37replace_element__dispatch__isArgumentINS_6traits12named_objectINS0_ILi16ES1_EEEEEEvNS4_17integral_constantIbLb0EEENS_8internal14Proxy_IteratorINSA_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ env__ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE25__init_copy_ctor_externalEPKcm env5_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEEC2Ev  env_ZNSt3__28ios_base4initEPv envR_FlushConsole 
-envRprintf envREprintf envRf_isString  envRf_type2char  env+_ZN4Rcpp14not_compatibleC2IJPKciEEES3_DpOT_ env_ZN4Rcpp14not_compatibleD2Ev  env#_ZN4Rcpp6r_castILi16EEEP7SEXPRECS2_  env
-STRING_ELT env_ZN4Rcpp6StringC2EP7SEXPREC envh_ZN10tinyformat6formatIJPKciEEENSt3__212basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEES2_DpRKT_ env_ZNSt9exceptionD2Ev  env2_ZN4Rcpp8internal11r_true_castILi16EEEP7SEXPRECS3_  envRf_getCharCE  envY_ZN10tinyformat6formatIJPKciEEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEES2_DpRKT_ envI_ZNKSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEE3strEv envJ_ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED1Ev  env]_ZN10tinyformat7vformatERNSt3__213basic_ostreamIcNS0_11char_traitsIcEEEEPKcRKNS_10FormatListE envJ_ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev envh_ZN10tinyformat6detail10formatImplERNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKcPKNS0_9FormatArgEi envd_ZN10tinyformat6detail24printFormatStringLiteralERNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKc envP_ZN4Rcpp4stopERKNSt3__212basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE envz_ZN10tinyformat6detail21streamStateFromFormatERNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEERbRiPKcPKNS0_9FormatArgES8_i env`_ZNK10tinyformat6detail9FormatArg6formatERNSt3__213basic_ostreamIcNS2_11char_traitsIcEEEEPKcS9_i 	env8_ZNSt3__29basic_iosIcNS_11char_traitsIcEEE7copyfmtERKS3_ env:_ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE5writeEPKcl env/_ZN10tinyformat6detail18parseIntAndAdvanceERPKc  env)_ZNK10tinyformat6detail9FormatArg5toIntEv  env_ZN4Rcpp9exceptionC2EPKcb env_ZN4Rcpp9exceptionD2Ev  env_ZNKSt3__28ios_base6getlocEv env_ZNSt3__26localeD1Ev  env%_ZNKSt3__26locale9use_facetERNS0_2idE env=_ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryC1ERS3_ env:_ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryD1Ev  env7_ZNSt3__28ios_base33__set_badbit_and_consider_rethrowEv envI_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6__initEmc env_ZNSt3__28ios_base5clearEj env^_ZN10tinyformat11formatValueIPKcEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEES2_S2_iRKT_ 	env:_ZN10tinyformat6detail12convertToIntIPKcLb0EE6invokeERKS3_  envr_ZN10tinyformat6detail17formatValueAsTypeIPKcPKvLb1EE6invokeERNSt3__213basic_ostreamIcNS7_11char_traitsIcEEEERKS3_ env\_ZN10tinyformat6detail15formatTruncatedERNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKci env5_ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEElsEPKv env\_ZN10tinyformat11formatValueIiEEvRNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKcS8_iRKT_ 	envl_ZN10tinyformat6detail17formatValueAsTypeIicLb1EE6invokeERNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEERKi enva_ZN10tinyformat6detail15formatTruncatedIiEEvRNSt3__213basic_ostreamIcNS2_11char_traitsIcEEEERKT_i env3_ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEElsEi envF_ZNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev  env	PRINTNAME  envRf_ScalarString  env*_ZN4Rcpp14not_compatibleC2IJPKcEEES3_DpOT_ envg_ZN10tinyformat6formatIJPKcEEENSt3__212basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEES2_DpRKT_ envX_ZN10tinyformat6formatIJPKcEEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEES2_DpRKT_ env(_ZN4Rcpp14not_compatibleC2IJiEEEPKcDpOT_ env#_ZN4Rcpp6r_castILi10EEEP7SEXPRECS2_  enve_ZN10tinyformat6formatIJiEEENSt3__212basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEPKcDpRKT_ env1_ZN4Rcpp8internal10basic_castILi10EEEP7SEXPRECS3_  envV_ZN10tinyformat6formatIJiEEEvRNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKcDpRKT_ envRf_coerceVector env-_ZN4Rcpp14not_compatibleC2IJPKcS3_EEES3_DpOT_ envj_ZN10tinyformat6formatIJPKcS2_EEENSt3__212basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEES2_DpRKT_ env[_ZN10tinyformat6formatIJPKcS2_EEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEES2_DpRKT_ env__cxa_atexit env_ZN4Rcpp6StringC2ERKS0_ env2_ZN7fstcore8fststoreEN4Rcpp6StringEP7SEXPRECS3_S3_ env(_ZN4Rcpp4wrapINS_6StringEEEP7SEXPRECRKT_  env@_ZNK4Rcpp15PreserveStorageINS_12RObject_ImplIS0_EEE8inheritsEPKc env_ZN4Rcpp8internal9as_stringINSt3__212basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEEEET_P7SEXPRECNS_6traits17integral_constantIbLb0EEE env_ZNK4Rcpp6String8get_sexpEv  env'_ZN7fstcore11fstmetadataEN4Rcpp6StringE  env6_ZN7fstcore11fstretrieveEN4Rcpp6StringEP7SEXPRECS3_S3_ env<_ZN4Rcpp16Environment_ImplINS_15PreserveStorageEE8base_envEv envo_ZNK4Rcpp13BindingPolicyINS_16Environment_ImplINS_15PreserveStorageEEEE7BindingcvT_INS_13Function_ImplIS2_EEEEv env:_ZN4Rcpp15PreserveStorageINS_16Environment_ImplIS0_EEED2Ev  envf_ZNK4Rcpp13Function_ImplINS_15PreserveStorageEEclIA8_cNS_6traits12named_objectIbEEEEP7SEXPRECRKT_RKT0_ envd_ZN4Rcpp21function_not_exportedC2ERKNSt3__212basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE env#_ZN4Rcpp21function_not_exportedD2Ev  env7_ZN4Rcpp15PreserveStorageINS_13Function_ImplIS0_EEED2Ev  env=_ZN4Rcpp16Environment_ImplINS_15PreserveStorageEEC2EP7SEXPREC envU_ZNK4Rcpp13BindingPolicyINS_16Environment_ImplINS_15PreserveStorageEEEE7Binding3getEv  envk_ZN4Rcpp8internal2asINS_13Function_ImplINS_15PreserveStorageEEEEET_P7SEXPRECNS_6traits18r_type_generic_tagE envF_ZN4Rcpp8pairlistIA8_cNS_6traits12named_objectIbEEEEP7SEXPRECRKT_RKT0_ envC_ZNK4Rcpp13Function_ImplINS_15PreserveStorageEE6invokeEP7SEXPRECS4_ envJ_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6appendEPKc envK_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6insertEmPKc envK_ZN4Rcpp16Environment_ImplINS_15PreserveStorageEE14as_environmentEP7SEXPREC envF_ZN4Rcpp15PreserveStorageINS_16Environment_ImplIS0_EEE5set__EP7SEXPREC envRf_isEnvironment  envy_ZNK4Rcpp16Environment_ImplINS_15PreserveStorageEE3getERKNSt3__212basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEE env:_ZN4Rcpp13Function_ImplINS_15PreserveStorageEEC2EP7SEXPREC env6_ZN4Rcpp13Function_ImplINS_15PreserveStorageEEC2ERKS2_ envC_ZN4Rcpp15PreserveStorageINS_13Function_ImplIS0_EEE5set__EP7SEXPREC envH_ZN4Rcpp15PreserveStorageINS_13Function_ImplIS0_EEE6copy__IS2_EERT_RKS5_ envRf_findVarInFrame envRf_lcons env<_ZN4Rcpp4growINS_6traits12named_objectIbEEEEP7SEXPRECRKT_S5_ env_ZN4Rcpp4growEPKcP7SEXPREC env_ZN4Rcpp4growEP7SEXPRECS1_ envo_ZN4Rcpp8internal14grow__dispatchINS_6traits12named_objectIbEEEEP7SEXPRECNS2_17integral_constantIbLb1EEERKT_S6_ envRf_cons envc_ZN4Rcpp8internal26primitive_wrap__impl__castIbEEP7SEXPRECRKT_NS_6traits17integral_constantIbLb1EEE  envSET_TAG envK_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6appendEPKcm env!_ZNK4Rcpp6String13get_sexp_implEv  envH_ZNKSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE4findEcm envRf_mkCharLenCE env0_ZN4Rcpp8internal19check_single_stringEP7SEXPREC  envR_CHAR  env%_ZN7fstcore9fsthasherEP7SEXPRECS1_S1_ env&_ZN7fstcore7fstcompEP7SEXPRECS1_S1_S1_ env_ZN7fstcore9fstdecompEP7SEXPREC  env_ZN7fstcore14getnrofthreadsEv env%_ZN7fstcore14setnrofthreadsEP7SEXPREC  env._ZN4Rcpp8internal12primitive_asIiEET_P7SEXPREC  env!_ZN7fstcore18restore_after_forkEb env_ZN7fstcore9hasopenmpEv env#_ZN4Rcpp6r_castILi13EEEP7SEXPRECS2_  env1_ZN4Rcpp8internal10basic_castILi13EEEP7SEXPRECS3_  env__stack_pointerenv__memory_base GOT.mem
-R_NilValueGOT.mem_ZTIN4Rcpp9exceptionEGOT.mem_ZTIN4Rcpp17LongjumpExceptionEGOT.mem*_ZTIN4Rcpp8internal20InterruptedExceptionEGOT.mem_ZTISt9exceptionGOT.func_ZN4Rcpp9exceptionD2EvGOT.mem	R_BaseEnvGOT.mem__wasm_lpad_contextGOT.mem_ZTIN4Rcpp14not_compatibleEGOT.func_ZN4Rcpp14not_compatibleD2EvGOT.mem2_ZTINSt3__213basic_ostreamIcNS_11char_traitsIcEEEEGOT.memR_GlobalEnvGOT.mem_ZTVN4Rcpp14not_compatibleEenv__table_base GOT.mem_ZTVN4Rcpp8RostreamILb0EEEGOT.mem_ZTVN4Rcpp8RostreamILb1EEEGOT.funcm_ZN10tinyformat6detail9FormatArg10formatImplIPKcEEvRNSt3__213basic_ostreamIcNS5_11char_traitsIcEEEES4_S4_iPKvGOT.func4_ZN10tinyformat6detail9FormatArg9toIntImplIPKcEEiPKvGOT.memI_ZTTNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEEGOT.mem_ZTTN4Rcpp8RostreamILb0EEEGOT.mem_ZTTN4Rcpp8RostreamILb1EEEGOT.mem&_ZZN7fstcore9hasopenmpEvE11p_hasopenmpGOT.mem9_ZZN7fstcore18restore_after_forkEbE20p_restore_after_forkGOT.mem9_ZZN7fstcore14setnrofthreadsEP7SEXPRECE16p_setnrofthreadsGOT.mem1_ZZN7fstcore14getnrofthreadsEvE16p_getnrofthreadsGOT.mem._ZZN7fstcore9fstdecompEP7SEXPRECE11p_fstdecompGOT.mem2_ZZN7fstcore7fstcompEP7SEXPRECS1_S1_S1_E9p_fstcompGOT.mem4_ZZN7fstcore9fsthasherEP7SEXPRECS1_S1_E11p_fsthasherGOT.mem#_ZTIN4Rcpp22embedded_nul_in_stringEGOT.func_ZNSt9exceptionD2EvGOT.mem"_ZTVN4Rcpp21function_not_exportedEGOT.memG_ZZN7fstcore11fstretrieveEN4Rcpp6StringEP7SEXPRECS3_S3_E13p_fstretrieveGOT.mem8_ZZN7fstcore11fstmetadataEN4Rcpp6StringEE13p_fstmetadataGOT.mem"_ZTIN4Rcpp21function_not_exportedEGOT.func#_ZN4Rcpp21function_not_exportedD2EvGOT.mem@_ZZN7fstcore8fststoreEN4Rcpp6StringEP7SEXPRECS3_S3_E10p_fststoreGOT.mem4_ZTINSt3__215basic_streambufIcNS_11char_traitsIcEEEEGOT.func=_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEE9pbackfailEiGOT.func9_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEE5uflowEvGOT.func=_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEE9underflowEvGOT.func<_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEE6xsgetnEPclGOT.func=_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEE9showmanycEvGOT.funcS_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEE7seekposENS_4fposI11__mbstate_tEEjGOT.funcQ_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEE7seekoffExNS_8ios_base7seekdirEjGOT.func<_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEE6setbufEPclGOT.funcE_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEE5imbueERKNS_6localeEGOT.func5_ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED2EvGOT.memK_ZTCN4Rcpp8RostreamILb0EEE0_NSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEGOT.mem_ZTIN4Rcpp8RostreamILb0EEEGOT.func;_ZTv0_n12_NSt3__213basic_ostreamIcNS_11char_traitsIcEEED0EvGOT.func;_ZTv0_n12_NSt3__213basic_ostreamIcNS_11char_traitsIcEEED1EvGOT.func3_ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED0EvGOT.func3_ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED1EvGOT.memK_ZTCN4Rcpp8RostreamILb1EEE0_NSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEGOT.mem_ZTIN4Rcpp8RostreamILb1EEEGOT.mem_ZTVN4Rcpp9exceptionEGOT.memE_ZTVNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEEGOT.funck_ZN10tinyformat6detail9FormatArg10formatImplIiEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEEPKcSA_iPKvGOT.func2_ZN10tinyformat6detail9FormatArg9toIntImplIiEEiPKvGOT.memI_ZTVNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEEGOT.memR_ClassSymbolGOT.func(_ZNK4Rcpp22embedded_nul_in_string4whatEvGOT.func$_ZN4Rcpp22embedded_nul_in_stringD0EvGOT.mem#_ZTSN4Rcpp22embedded_nul_in_stringEGOT.func'_ZNK4Rcpp21function_not_exported4whatEvGOT.func#_ZN4Rcpp21function_not_exportedD0EvGOT.mem_ZTSN4Rcpp10eval_errorEGOT.mem"_ZTSN4Rcpp21function_not_exportedEGOT.mem_ZTIN4Rcpp10eval_errorEGOT.mem#_ZTVN4Rcpp22embedded_nul_in_stringEGOT.memR_UnboundValueGOT.func_ZNK4Rcpp9exception4whatEvGOT.func_ZN4Rcpp9exceptionD0EvGOT.func _ZNK4Rcpp14not_compatible4whatEvGOT.func_ZN4Rcpp14not_compatibleD0EvGOT.mem_ZTSN4Rcpp14not_compatibleEGOT.mem_ZTSN4Rcpp10RstreambufILb0EEEGOT.func%_ZN4Rcpp10RstreambufILb0EE8overflowEiGOT.func&_ZN4Rcpp10RstreambufILb0EE6xsputnEPKclGOT.func!_ZN4Rcpp10RstreambufILb0EE4syncEvGOT.func_ZN4Rcpp10RstreambufILb0EED0EvGOT.mem_ZTIN4Rcpp10RstreambufILb0EEEGOT.mem_ZTSN4Rcpp10RstreambufILb1EEEGOT.func%_ZN4Rcpp10RstreambufILb1EE8overflowEiGOT.func&_ZN4Rcpp10RstreambufILb1EE6xsputnEPKclGOT.func!_ZN4Rcpp10RstreambufILb1EE4syncEvGOT.func_ZN4Rcpp10RstreambufILb1EED0EvGOT.mem_ZTIN4Rcpp10RstreambufILb1EEEGOT.mem_ZTSN4Rcpp8RostreamILb0EEEGOT.func#_ZTv0_n12_N4Rcpp8RostreamILb0EED0EvGOT.func#_ZTv0_n12_N4Rcpp8RostreamILb0EED1EvGOT.func_ZN4Rcpp8RostreamILb0EED0EvGOT.func_ZN4Rcpp8RostreamILb0EED1EvGOT.mem_ZTSN4Rcpp8RostreamILb1EEEGOT.func#_ZTv0_n12_N4Rcpp8RostreamILb1EED0EvGOT.func#_ZTv0_n12_N4Rcpp8RostreamILb1EED1EvGOT.func_ZN4Rcpp8RostreamILb1EED0EvGOT.func_ZN4Rcpp8RostreamILb1EED1EvGOT.func_fst_hasopenmpGOT.func_fst_restore_after_forkGOT.func_fst_setnrofthreadsGOT.func_fst_getnrofthreadsGOT.func_fst_fstdecompGOT.func_fst_fstcompGOT.func_fst_fsthasherGOT.func_fst_fstretrieveGOT.func_fst_fstmetadataGOT.func_fst_fststoreGOT.mem_ZTSN4Rcpp9exceptionEGOT.mem(_ZTVN10__cxxabiv120__si_class_type_infoEGOT.mem_ZTSN4Rcpp17LongjumpExceptionEGOT.mem*_ZTSN4Rcpp8internal20InterruptedExceptionEGOT.mem%_ZTVN10__cxxabiv117__class_type_infoEGOT.mem_ZNSt3__25ctypeIcE2idEGOT.func'_ZN4Rcpp8internal9maybeJumpEPv8RbooleanGOT.func)_ZN4Rcpp8internal19Rcpp_protected_evalEPvGOT.memR_NamesSymbolGOT.mem_ZTVN4Rcpp10RstreambufILb0EEEGOT.mem_ZTVN4Rcpp10RstreambufILb1EEEenv__cpp_exception env__c_longjmp envmemory env__indirect_function_tablep ÔÒ
-
-      
-                       	          	 	 	    	 	                     ‰, A $ Aœ$ A˜$ AŒ$ A " Aœ" A" Aÿ Aë AÌ A” A  Aô A€ Aè A¤  A   A”  A¢ Aˆ A¨ Aî AÜ A× Aè A AÀ Aü A¤ A® A“ Aì AÔ AÀ A´ Aè Aœ A° A¨ A  AØ A° Aì AÄısñ__wasm_call_ctors ì__wasm_apply_data_relocs í_ZN4Rcpp8RostreamILb1EEC1Ev î_ZTVN4Rcpp8RostreamILb1EEE¤_ZTTN4Rcpp8RostreamILb1EEE£_ZN4Rcpp10RstreambufILb1EEC2Ev ğ_ZN4Rcpp8RostreamILb1EED1Ev ò_ZN4Rcpp8RostreamILb1EED2Ev ó_ZN4Rcpp8RostreamILb0EEC1Ev ô_ZTVN4Rcpp8RostreamILb0EEE¢_ZTTN4Rcpp8RostreamILb0EEE¡_ZN4Rcpp10RstreambufILb0EEC2Ev õ_ZN4Rcpp8RostreamILb0EED1Ev ÷_ZN4Rcpp8RostreamILb0EED2Ev ó_fst_fststore øO_ZN4Rcpp8internal2asINS_6StringEEET_P7SEXPRECNS_6traits21r_type_RcppString_tagE ú(_Z8fststoreN4Rcpp6StringEP7SEXPRECS2_S2_ ıC_ZN4Rcpp12RObject_ImplINS_15PreserveStorageEEaSIP7SEXPRECEERS2_RKT_ û_ZN4Rcpp6StringD2Ev ü_ZN4Rcpp8RNGScopeD2Ev ı6_ZN4Rcpp15PreserveStorageINS_12RObject_ImplIS0_EEED2Ev ş4_Z29rcpp_exception_to_r_conditionRKN4Rcpp9exceptionE ÿ'_ZN4Rcpp8internal10resumeJumpEP7SEXPREC €*_Z24exception_to_r_conditionRKSt9exception R_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEC2B7v160006IDnEEPKc ‚W_Z19string_to_try_errorRKNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE ƒ*_ZTIN4Rcpp8internal20InterruptedExceptionE _ZTIN4Rcpp17LongjumpExceptionEŸ_ZTIN4Rcpp9exceptionE _ZN4Rcpp12Rcpp_protectEP7SEXPREC „B_ZN4Rcpp15PreserveStorageINS_12RObject_ImplIS0_EEE5set__EP7SEXPREC …_ZN4Rcpp6ShieldIP7SEXPRECED2Ev †?_Z31exception_to_condition_templateISt9exceptionEP7SEXPRECRKT_b ˆ,_ZNK4Rcpp9exception21copy_stack_trace_to_rEv ‰D_Z31exception_to_condition_templateIN4Rcpp9exceptionEEP7SEXPRECRKT_b ˆ/_ZN4Rcpp8internal18isLongjumpSentinelEP7SEXPREC Š-_ZN4Rcpp8internal16getLongjumpTokenEP7SEXPREC ‹_fst_fstmetadata Œ_Z11fstmetadataN4Rcpp6StringE …_fst_fstretrieve ,_Z11fstretrieveN4Rcpp6StringEP7SEXPRECS2_S2_ ‡_fst_fsthasher _Z9fsthasherP7SEXPRECS0_S0_ ¦_fst_fstcomp _Z7fstcompP7SEXPRECS0_S0_S0_ ©_fst_fstdecomp _Z9fstdecompP7SEXPREC «_fst_getnrofthreads ‘_Z14getnrofthreadsv ¯_fst_setnrofthreads ’_Z14setnrofthreadsP7SEXPREC ²c_ZN4Rcpp8internal26primitive_wrap__impl__castIiEEP7SEXPRECRKT_NS_6traits17integral_constantIbLb0EEE “_fst_restore_after_fork ”._ZN4Rcpp8internal12primitive_asIbEET_P7SEXPREC •_Z18restore_after_forkb µ_fst_hasopenmp –_Z9hasopenmpv ·
-R_init_fst —#_ZTv0_n12_N4Rcpp8RostreamILb1EED1Ev ˜_ZN4Rcpp8RostreamILb1EED0Ev ™#_ZTv0_n12_N4Rcpp8RostreamILb1EED0Ev š#_ZTv0_n12_N4Rcpp8RostreamILb0EED1Ev ›_ZN4Rcpp8RostreamILb0EED0Ev œ#_ZTv0_n12_N4Rcpp8RostreamILb0EED0Ev _Z13get_last_callv !_ZN4Rcpp7ShelterIP7SEXPRECEclES2_ ŸY_Z21get_exception_classesRKNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE  a_Z14make_conditionRKNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEP7SEXPRECS9_S9_ ¡_ZN4Rcpp7ShelterIP7SEXPRECED2Ev £%_ZN4Rcpp14Rcpp_fast_evalEP7SEXPRECS1_ ¤._ZN4Rcpp8internal17is_Rcpp_eval_callEP7SEXPREC ¥)_ZN4Rcpp8internal19Rcpp_protected_evalEPv ¦)_ZN4Rcpp13unwindProtectEPFP7SEXPRECPvES2_ § _ZN4Rcpp8internal3nthEP7SEXPRECi ¨'_ZN4Rcpp17LongjumpExceptionC2EP7SEXPREC ©'_ZN4Rcpp8internal9maybeJumpEPv8Rboolean ªw_ZN4Rcpp6VectorILi16ENS_15PreserveStorageEEC2ImEET_PNS_6traits9enable_ifIXsr6traits13is_arithmeticIS4_EE5valueEvE4typeE «G_ZNSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEC2ERKS5_ ¬­_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE16create__dispatchINS_6traits12named_objectIA1_cEENS5_IiEENS5_INS0_ILi16ES1_EEEEEES2_NS4_17integral_constantIbLb1EEERKT_RKT0_RKT1_ ­ _ZN4Rcpp20AttributeProxyPolicyINS_6VectorILi19ENS_15PreserveStorageEEEE14AttributeProxyC2ERS3_RKNSt3__212basic_stringIcNS7_11char_traitsIcEENS7_9allocatorIcEEEE ®i_ZN4Rcpp20AttributeProxyPolicyINS_6VectorILi19ENS_15PreserveStorageEEEE14AttributeProxyaSIA17_cEERS5_RKT_ ¯4_ZN4Rcpp15PreserveStorageINS_6VectorILi19ES0_EEED2Ev ş4_ZN4Rcpp15PreserveStorageINS_6VectorILi16ES0_EEED2Ev ş@_ZN4Rcpp15PreserveStorageINS_6VectorILi16ES0_EEE5set__EP7SEXPREC °e_ZN4Rcpp20AttributeProxyPolicyINS_6VectorILi19ENS_15PreserveStorageEEEE14AttributeProxy3setEP7SEXPREC ±è_ZNKSt3__211__copy_loopINS_17_ClassicAlgPolicyEEclB7v160006IPKNS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEESB_N4Rcpp8internal14Proxy_IteratorINSD_12string_proxyILi16ENSC_15PreserveStorageEEEEEEENS_4pairIT_T1_EESK_T0_SL_ ³‡_ZN4Rcpp8internal12string_proxyILi16ENS_15PreserveStorageEE3setINSt3__212basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEEEEvRKT_ ´r_ZN4Rcpp8internal28make_charsexp__impl__cstringERKNSt3__212basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE µI_ZN4Rcpp8internal12string_proxyILi16ENS_15PreserveStorageEE3setEP7SEXPREC ¶1_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEEC2ERKi ·ª_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE15replace_elementINS_6traits12named_objectIA1_cEEEEvNS_8internal14Proxy_IteratorINS8_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ ¸§_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE15replace_elementINS_6traits12named_objectIiEEEEvNS_8internal14Proxy_IteratorINS7_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ ¹µ_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE15replace_elementINS_6traits12named_objectINS0_ILi16ES1_EEEEEEvNS_8internal14Proxy_IteratorINS8_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ º@_ZN4Rcpp15PreserveStorageINS_6VectorILi19ES0_EEE5set__EP7SEXPREC °Ó_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE25replace_element__dispatchINS_6traits12named_objectIA1_cEEEEvNS4_17integral_constantIbLb1EEENS_8internal14Proxy_IteratorINSA_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ »Ğ_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE25replace_element__dispatchINS_6traits12named_objectIiEEEEvNS4_17integral_constantIbLb1EEENS_8internal14Proxy_IteratorINS9_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ ¼Ş_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE25replace_element__dispatchINS_6traits12named_objectINS0_ILi16ES1_EEEEEEvNS4_17integral_constantIbLb1EEENS_8internal14Proxy_IteratorINSA_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ ½ß_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE37replace_element__dispatch__isArgumentINS_6traits12named_objectIA1_cEEEEvNS4_17integral_constantIbLb0EEENS_8internal14Proxy_IteratorINSA_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ ¾_ZN4Rcpp4wrapEPKc ¿J_ZN4Rcpp8internal13generic_proxyILi19ENS_15PreserveStorageEE3setEP7SEXPREC ÀÜ_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE37replace_element__dispatch__isArgumentINS_6traits12named_objectIiEEEEvNS4_17integral_constantIbLb0EEENS_8internal14Proxy_IteratorINS9_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ Áê_ZN4Rcpp6VectorILi19ENS_15PreserveStorageEE37replace_element__dispatch__isArgumentINS_6traits12named_objectINS0_ILi16ES1_EEEEEEvNS4_17integral_constantIbLb0EEENS_8internal14Proxy_IteratorINSA_13generic_proxyILi19ES1_EEEEP7SEXPRECiRKT_ Â_ZTVN4Rcpp10RstreambufILb1EEE_ZN4Rcpp10RstreambufILb1EED0Ev Ã!_ZN4Rcpp10RstreambufILb1EE4syncEv Ä&_ZN4Rcpp10RstreambufILb1EE6xsputnEPKcl Å%_ZN4Rcpp10RstreambufILb1EE8overflowEi Æ_ZTVN4Rcpp10RstreambufILb0EEEœ_ZN4Rcpp10RstreambufILb0EED0Ev Ã!_ZN4Rcpp10RstreambufILb0EE4syncEv Ä&_ZN4Rcpp10RstreambufILb0EE6xsputnEPKcl Ç%_ZN4Rcpp10RstreambufILb0EE8overflowEi Æ+_ZN4Rcpp14not_compatibleC2IJPKciEEES3_DpOT_ È_ZN4Rcpp14not_compatibleD2Ev É_ZTIN4Rcpp14not_compatibleE›#_ZN4Rcpp6r_castILi16EEEP7SEXPRECS2_ Ê_ZN4Rcpp6StringC2EP7SEXPREC Ë_ZTVN4Rcpp14not_compatibleEšh_ZN10tinyformat6formatIJPKciEEENSt3__212basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEES2_DpRKT_ Ì2_ZN4Rcpp8internal11r_true_castILi16EEEP7SEXPRECS3_ ÍY_ZN10tinyformat6formatIJPKciEEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEES2_DpRKT_ ÏJ_ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED1Ev Ğ_ZN4Rcpp14not_compatibleD0Ev Ñ _ZNK4Rcpp14not_compatible4whatEv Ò2_ZN10tinyformat6detail9FormatArg9toIntImplIiEEiPKv Ók_ZN10tinyformat6detail9FormatArg10formatImplIiEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEEPKcSA_iPKv Ô4_ZN10tinyformat6detail9FormatArg9toIntImplIPKcEEiPKv Õm_ZN10tinyformat6detail9FormatArg10formatImplIPKcEEvRNSt3__213basic_ostreamIcNS5_11char_traitsIcEEEES4_S4_iPKv Ö]_ZN10tinyformat7vformatERNSt3__213basic_ostreamIcNS0_11char_traitsIcEEEEPKcRKNS_10FormatListE ×J_ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev Øh_ZN10tinyformat6detail10formatImplERNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKcPKNS0_9FormatArgEi Ùd_ZN10tinyformat6detail24printFormatStringLiteralERNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKc ÛP_ZN4Rcpp4stopERKNSt3__212basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE Üz_ZN10tinyformat6detail21streamStateFromFormatERNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEERbRiPKcPKNS0_9FormatArgES8_i İ`_ZNK10tinyformat6detail9FormatArg6formatERNSt3__213basic_ostreamIcNS2_11char_traitsIcEEEEPKcS9_i Ş/_ZN10tinyformat6detail18parseIntAndAdvanceERPKc á)_ZNK10tinyformat6detail9FormatArg5toIntEv â_ZN4Rcpp9exceptionC2EPKcb ã_ZN4Rcpp9exceptionD2Ev ä_ZTVN4Rcpp9exceptionE™_ZN4Rcpp9exceptionD0Ev æ_ZNK4Rcpp9exception4whatEv Ò^_ZN10tinyformat11formatValueIPKcEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEES2_S2_iRKT_ ç:_ZN10tinyformat6detail12convertToIntIPKcLb0EE6invokeERKS3_ èr_ZN10tinyformat6detail17formatValueAsTypeIPKcPKvLb1EE6invokeERNSt3__213basic_ostreamIcNS7_11char_traitsIcEEEERKS3_ é\_ZN10tinyformat6detail15formatTruncatedERNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKci ê\_ZN10tinyformat11formatValueIiEEvRNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKcS8_iRKT_ ël_ZN10tinyformat6detail17formatValueAsTypeIicLb1EE6invokeERNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEERKi ìa_ZN10tinyformat6detail15formatTruncatedIiEEvRNSt3__213basic_ostreamIcNS2_11char_traitsIcEEEERKT_i íF_ZNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev î*_ZN4Rcpp14not_compatibleC2IJPKcEEES3_DpOT_ ïg_ZN10tinyformat6formatIJPKcEEENSt3__212basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEES2_DpRKT_ ğX_ZN10tinyformat6formatIJPKcEEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEES2_DpRKT_ ñ(_ZN4Rcpp14not_compatibleC2IJiEEEPKcDpOT_ ó#_ZN4Rcpp6r_castILi10EEEP7SEXPRECS2_ ôe_ZN10tinyformat6formatIJiEEENSt3__212basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEPKcDpRKT_ õ1_ZN4Rcpp8internal10basic_castILi10EEEP7SEXPRECS3_ öV_ZN10tinyformat6formatIJiEEEvRNSt3__213basic_ostreamIcNS1_11char_traitsIcEEEEPKcDpRKT_ ÷-_ZN4Rcpp14not_compatibleC2IJPKcS3_EEES3_DpOT_ øj_ZN10tinyformat6formatIJPKcS2_EEENSt3__212basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEES2_DpRKT_ ù[_ZN10tinyformat6formatIJPKcS2_EEEvRNSt3__213basic_ostreamIcNS3_11char_traitsIcEEEES2_DpRKT_ ú*_ZTSN4Rcpp8internal20InterruptedExceptionE˜_ZTSN4Rcpp17LongjumpExceptionE—_ZTSN4Rcpp9exceptionE–_ZTIN4Rcpp8RostreamILb1EEE•K_ZTCN4Rcpp8RostreamILb1EEE0_NSt3__213basic_ostreamIcNS1_11char_traitsIcEEEE”_ZTSN4Rcpp8RostreamILb1EEE“_ZTIN4Rcpp8RostreamILb0EEE’K_ZTCN4Rcpp8RostreamILb0EEE0_NSt3__213basic_ostreamIcNS1_11char_traitsIcEEEE‘_ZTSN4Rcpp8RostreamILb0EEE_ZTIN4Rcpp10RstreambufILb1EEE_ZTSN4Rcpp10RstreambufILb1EEE_ZTIN4Rcpp10RstreambufILb0EEE_ZTSN4Rcpp10RstreambufILb0EEEŒ_ZTSN4Rcpp14not_compatibleE‹_ZN4Rcpp6StringC2ERKS0_ ş2_ZN7fstcore8fststoreEN4Rcpp6StringEP7SEXPRECS3_S3_ ÿ@_ZZN7fstcore8fststoreEN4Rcpp6StringEP7SEXPRECS3_S3_E10p_fststoreŠ(_ZN4Rcpp4wrapINS_6StringEEEP7SEXPRECRKT_ @_ZNK4Rcpp15PreserveStorageINS_12RObject_ImplIS0_EEE8inheritsEPKc ‚_ZN4Rcpp8internal9as_stringINSt3__212basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEEEET_P7SEXPRECNS_6traits17integral_constantIbLb0EEE ƒ_ZNK4Rcpp6String8get_sexpEv „'_ZN7fstcore11fstmetadataEN4Rcpp6StringE †8_ZZN7fstcore11fstmetadataEN4Rcpp6StringEE13p_fstmetadata‰6_ZN7fstcore11fstretrieveEN4Rcpp6StringEP7SEXPRECS3_S3_ ˆG_ZZN7fstcore11fstretrieveEN4Rcpp6StringEP7SEXPRECS3_S3_E13p_fstretrieveˆ<_ZN4Rcpp16Environment_ImplINS_15PreserveStorageEE8base_envEv ‰o_ZNK4Rcpp13BindingPolicyINS_16Environment_ImplINS_15PreserveStorageEEEE7BindingcvT_INS_13Function_ImplIS2_EEEEv Š:_ZN4Rcpp15PreserveStorageINS_16Environment_ImplIS0_EEED2Ev şf_ZNK4Rcpp13Function_ImplINS_15PreserveStorageEEclIA8_cNS_6traits12named_objectIbEEEEP7SEXPRECRKT_RKT0_ ‹d_ZN4Rcpp21function_not_exportedC2ERKNSt3__212basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE #_ZN4Rcpp21function_not_exportedD2Ev "_ZTIN4Rcpp21function_not_exportedE‡7_ZN4Rcpp15PreserveStorageINS_13Function_ImplIS0_EEED2Ev ş=_ZN4Rcpp16Environment_ImplINS_15PreserveStorageEEC2EP7SEXPREC U_ZNK4Rcpp13BindingPolicyINS_16Environment_ImplINS_15PreserveStorageEEEE7Binding3getEv ‘k_ZN4Rcpp8internal2asINS_13Function_ImplINS_15PreserveStorageEEEEET_P7SEXPRECNS_6traits18r_type_generic_tagE ’F_ZN4Rcpp8pairlistIA8_cNS_6traits12named_objectIbEEEEP7SEXPRECRKT_RKT0_ “C_ZNK4Rcpp13Function_ImplINS_15PreserveStorageEE6invokeEP7SEXPRECS4_ ”"_ZTVN4Rcpp21function_not_exportedE†K_ZN4Rcpp16Environment_ImplINS_15PreserveStorageEE14as_environmentEP7SEXPREC •F_ZN4Rcpp15PreserveStorageINS_16Environment_ImplIS0_EEE5set__EP7SEXPREC …_ZTIN4Rcpp10eval_errorE…y_ZNK4Rcpp16Environment_ImplINS_15PreserveStorageEE3getERKNSt3__212basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEE –:_ZN4Rcpp13Function_ImplINS_15PreserveStorageEEC2EP7SEXPREC —6_ZN4Rcpp13Function_ImplINS_15PreserveStorageEEC2ERKS2_ ˜C_ZN4Rcpp15PreserveStorageINS_13Function_ImplIS0_EEE5set__EP7SEXPREC …H_ZN4Rcpp15PreserveStorageINS_13Function_ImplIS0_EEE6copy__IS2_EERT_RKS5_ ™<_ZN4Rcpp4growINS_6traits12named_objectIbEEEEP7SEXPRECRKT_S5_ š_ZN4Rcpp4growEPKcP7SEXPREC ›_ZN4Rcpp4growEP7SEXPRECS1_ œo_ZN4Rcpp8internal14grow__dispatchINS_6traits12named_objectIbEEEEP7SEXPRECNS2_17integral_constantIbLb1EEERKT_S6_ c_ZN4Rcpp8internal26primitive_wrap__impl__castIbEEP7SEXPRECRKT_NS_6traits17integral_constantIbLb1EEE #_ZN4Rcpp21function_not_exportedD0Ev Ÿ'_ZNK4Rcpp21function_not_exported4whatEv Ò!_ZNK4Rcpp6String13get_sexp_implEv  #_ZTVN4Rcpp22embedded_nul_in_stringE„#_ZTIN4Rcpp22embedded_nul_in_stringEƒ$_ZN4Rcpp22embedded_nul_in_stringD0Ev ¡(_ZNK4Rcpp22embedded_nul_in_string4whatEv ¢0_ZN4Rcpp8internal19check_single_stringEP7SEXPREC £"_ZTSN4Rcpp21function_not_exportedE‚_ZTSN4Rcpp10eval_errorE#_ZTSN4Rcpp22embedded_nul_in_stringE€%_ZN7fstcore9fsthasherEP7SEXPRECS1_S1_ §4_ZZN7fstcore9fsthasherEP7SEXPRECS1_S1_E11p_fsthasher&_ZN7fstcore7fstcompEP7SEXPRECS1_S1_S1_ ª2_ZZN7fstcore7fstcompEP7SEXPRECS1_S1_S1_E9p_fstcomp~_ZN7fstcore9fstdecompEP7SEXPREC ¬._ZZN7fstcore9fstdecompEP7SEXPRECE11p_fstdecomp}_ZN7fstcore14getnrofthreadsEv °1_ZZN7fstcore14getnrofthreadsEvE16p_getnrofthreads|%_ZN7fstcore14setnrofthreadsEP7SEXPREC ³9_ZZN7fstcore14setnrofthreadsEP7SEXPRECE16p_setnrofthreads{._ZN4Rcpp8internal12primitive_asIiEET_P7SEXPREC ´!_ZN7fstcore18restore_after_forkEb ¶9_ZZN7fstcore18restore_after_forkEbE20p_restore_after_forkz_ZN7fstcore9hasopenmpEv ¸&_ZZN7fstcore9hasopenmpEvE11p_hasopenmpy#_ZN4Rcpp6r_castILi13EEEP7SEXPRECS2_ ¹1_ZN4Rcpp8internal10basic_castILi13EEEP7SEXPRECS3_ º	 #ñöûü¤¥­®
-…ÙÒÁ#" A´j #"A   ´  A¨j AjA   ´#" A¬j #"AjA   ´  A j AjA   ´#" A¨ j #"AjA   ´  Aœ!j AjA   ´#" A¤"j #"AjA   ´  A˜#j AjA   ´›##6##6##6##6 ##6<#A@k#6 ##6D##6H##6d##6h##6l##6p##6Œ##6##6”##6˜##6´##6¸##6¼##6À##6Ü##6à##6ä##6è##6„##6ˆ##6Œ##6##6¬##6°##6´##6¸##6Ô##6Ø##6Ü##6à##6ü##6€##6„##6ˆ#AÈj#F6 #A j#rAj" 6 #A¤j#q6 #A¨j  6 #A¬j#p6 #A°j#oAj" 6 #A´j#n6 #A¸j#6 #AÀj#A‘j6 #AÄj#m6 #AÌj#AÒj6 #AĞj#l6 #AØj#AÎ
-j6 #AÜj#k6 #Aäj#A‘j6 #Aèj#j6 #Ağj#AÃj6 #Aôj#i6 #Aüj#Aáj6 #A€j#h6 #Aˆj#Ašj6 #AŒj#g6 #A”j#Aîj6 #A˜j#f6 #A j#Aæj6 #A¤j#e6 #A¬j#Aƒj6 #A°j#d6 #AÌj#86 #AĞj#c6 #AÔj#b6 #Aàj#86 #Aäj#a6 #Aèj#`6 #Aìj#Aj6 #Ağj#7Aj6 #Aôj#7A j6 #Aøj#A j6 #A„j#6 #Aˆj#66 #AŒj#56 #A˜j#6 #Aœj#46 #A j#36 #A¤j  6 #A¨j#_6 #A¬j#6 #A¸j#26 #A¼j#^6 #AÀj#]6 #AÌj#26 #AĞj#\6 #AÔj#[6 #AØj#Aj6 #AÜj#1Aj6 #Aàj#1A j6 #Aäj#A j6 #Ağj#6 #Aôj#66 #Aøj#56 #A„j#6 #Aˆj#46 #AŒj#36 #Aj  6 #A”j#Z6 #A˜j#6 #A j#Y6 #A¤j#06 #A¨j#X6 #A¬j#/6 #A°j#.6 #A´j#-6 #A¸j#,6 #A¼j#W6 #AÀj#+6 #AÄj#*6 #AÈj#)6 #AÌj#(6 #AĞj#'6 #AÔj#V6 #AØj#U6 #AÜj  6 #Aàj#T6 #Aäj#&6 #Aìj#S6 #Ağj#06 #Aôj#R6 #Aøj#/6 #Aüj#.6 #A€j#-6 #A„j#,6 #Aˆj#Q6 #AŒj#+6 #Aj#*6 #A”j#)6 #A˜j#(6 #Aœj#'6 #A j#P6 #A¤j#O6 #A¨j  6 #A¬j#N6 #A°j#&6 #A´j  6 #A¸j#M6 #A¼j#6 #AÄj#
-6 #AÈj#6 #AÌj#L6 #AĞj#K6 #AØj#6 #AÜj#6 #Aàj#J6 #Aäj#I6 #Aèj  6 #Aìj#E6 #Ağj#6 #Aôj  6 #Aøj#D6 #Aüj#6 #A„j##6 #Aˆj#$6 #AŒj#C6 #Aj#B6 #A”j  6 #A˜j#A6 #Aœj#6 #A¤j#6 #A¨j#6 #A¬j#@6 #A°j#?6 v# !  #"A j6$   Aj6   A$j!@  #Aj  Aj"ï" #"Aj6   A j6 @  $   #Aj	  $  	   D   ( "6    Ak( j (6     ( Ak( j" u B€€€€p7H  #x!  t"  Aj6    #A´j   #" A$j  4   ( "6    Ak( j (6   Aj1   Ajv# !  #"A j6$   Aj6   A$j!@  #Aj  Aj"ï" #"Aj6   A j6 @  $   #Aj	  $  	   #w!  t"  Aj6    #A¨j   #	" A$j  •# A@j"$ #A j-  E@#"A¾j
-! A jA:   Aœj 6  #( "6<  68@@ù@ Aj"  @     ı6 A8j Aj $  Aj	  $  A7j	  $  A8j@	 !  $ #	"A 6  #6  @@@@ ("AF@  @ AF@  ( !  AG@  !  $ @ $  	    A   ! @ AF@@  !  $ @ $  	  @ Aj#Aìj!@ !  $  	  $ @ $  	  #!#Aœj(    ( A#( !   Aj (8!  A7j A8j A@k$   Q@#Ağj-  Aq@#Aìj( ! #"A¹j Aİj5!  AğjA:   Aìj  6    ›# Ak"$ @ yE@AN!  A: @ F! A:   z6 A:   G6  #A˜j Aj Aj{ A : #
-#S $  - @  P	     }A ~ Aj$  D# Ak"$   ( "6@     $  Aj!	  Aj! Aj$   ;# !@  (‡ $    #"( 6    ( 6  Aj  b# !@@#A€j-  Aq@#Aüj( !#"A¹j AĞj5! A€jA:   Aüj 6    $    3# !@  (‡ $    #"( 6    ( 6     '    - (   )@  *!   +  ,    A&     $%  ‚# Ak"$    (     , A H""6@ #Aïj
- "6@   (     , A H"" 6@  #( "6 @  #>( #AÓj"#  #A¥j
- # $ @ !	  $ @ Aj!	  $ @ Aj!	  $  Aj!	  ! Aj! Aj! Aj! Aj$      #( G@    )    ( G@   6   (‡    ( ²6'  ( #( G@# !@A $    R@#Aøj-  Aq@#Aôj( !#"A¹j A¹
-j5! AøjA:   Aôj 6     ›# A k"$ @@ Aj! Aj  ( Ak( (!@#Aˆj-  Aq@#A„j( !#"A¹j Aõj5! AˆjA:   A„j 6      $  	  @@ Aj!    ( (  !    !  A 6@@ @ Aj"67! @#Aj-  Aq@#AŒj( !#"A¹j A›j5! AjA:   AŒj 6   7!#( "! Aj"      Aj8797!#( ¢ $  Aj:  	  $  Aj	  Aj:   Aj A j$  Ğ# Ak"$ @  ("  ("F@#( ¢ A„j  kAmA Y"(!  (!  (!  A 6€  6|@ Ağ j!# A k"$   (|6  (€6# Ak"$   (6  (6# Ak"$   (6  (6# A k"$   )7 Aj Aj    Ajb (!  )7      kAmAlj6 A j$  Aj$  Aj$   (6   (6 A j$  AĞ j#Ağj!@  AÜ j Z"6h #" Aëj6l A6D@ A,j  Aëj!@  A8j Z" 6H  AÄ j6L@ Aj#Aj!@ Aj Z!  6(  6$@  Aè j AÈ j A$j[ $  	  $  	  $   	  $  	  $  	  $  	        @ AÜ j#AØj! @ AĞ j Ağ j  \#A°j] $   	    (p¢ $  Ağ j^	  $  _	  Ağ j^ _ Aj$ (@  #AĞjVE   FAG   GAF!    A W’# A@j"$ #A¨j-  E@#"A¾j
-! A¨jA:   A¤j 6  #( "6<  68@@ù@ Aj"  @  …6 A8j Aj $  Aj	  $  A7j	  $  A8j@	 !  $ #	"A 6  #A(j6  @@@@ ("AF@  @ AF@  ( !  AG@  !  $ @ $  	    A   ! @ AF@@  !  $ @ $  	  @ Aj#Aìj!@ !  $  	  $ @ $  	  #!#A¤j(    ( A#( !   Aj (8!  A7j A8j A@k$   ™# A@j"$ #A°j-  E@#"A¾j
-! A°jA:   A¬j 6  #( "6<  68@@ù@ Aj"  @     ‡6 A8j Aj $  Aj	  $  A7j	  $  A8j@	 !  $ #	"A 6  #AĞ j6  @@@@ ("AF@  @ AF@  ( !  AG@  !  $ @ $  	    A   ! @ AF@@  !  $ @ $  	  @ Aj#Aìj!@ !  $  	  $ @ $  	  #!#A¬j(    ( A#( !   Aj (8!  A7j A8j A@k$   ò# A k"$ #A¸j-  E@#"A¾j
-! A¸jA:   A´j 6  #( "6  6@@ù@     ¦6 Aj Aj $  Aj	  $  Aj@	 !  $ #	"A 6  #Aø j6  @@@@ ("AF@  @ AF@  ( !  AG@  ! $ @ $  	    A   ! @ AF@@  ! $ @ $  	  @ Aj#Aìj! @  ! $   	  $ @ $  	   #! #A´j(    ( A#( !  (! Aj Aj A j$  ô# A k"$ #AÀj-  E@#"A¾j
-! AÀjA:   A¼j 6  #( "6  6@@ù@      ©6 Aj Aj $  Aj	  $  Aj@	 !  $ #	"A 6  #A j6  @@@@ ("AF@  @ AF@  ( !  AG@  ! $ @ $  	    A   ! @ AF@@  ! $ @ $  	  @ Aj#Aìj! @  ! $   	  $ @ $  	   #! #A¼j(    ( A#( !  (! Aj Aj A j$  î# A k"$ #AÈj-  E@#"A¾j
-! AÈjA:   AÄj 6  #( "6  6@@ù@   ä6 Aj Aj $  Aj	  $  Aj@	 !  $ #	"A 6  #AÈj6  @@@@ ("AF@  @ AF@  ( !  AG@  !  $ @ $  	    A   ! @ AF@@  !  $ @ $  	  @ Aj#Aìj!@ !  $  	  $ @ $  	  #!#AÄj(    ( A#( !   (!  Aj Aj A j$   ì# A k" $ #AĞj-  E@#"A¾j
-! AĞjA:   AÌj 6   #( "6   6@@ù@  å6  Aj  Aj  $   Aj	   $   Aj@	 !  $ #	"A 6  #Ağj6 @@@@ ("AF@ @ AF@ ( ! AG@ !  $ @  $  	   A  !@ AF@@ !  $ @  $  	  @  Aj#Aìj!@ !  $  	   $ @  $  	  #!#AÌj(   ( A#( !   (!  Aj  Aj  A j$  ú# A k"$ #AØj-  E@#"A¾j
-! AØjA:   AÔj 6  #( "6  6@@ù@   æ6  Aj-6 Aj Aj $  Aj	  $  Aj@	 !  $ #	"A 6  #A˜j6  @@@@ ("AF@  @ AF@  ( !  AG@  !  $ @ $  	    A   ! @ AF@@  !  $ @ $  	  @ Aj#Aìj!@ !  $  	  $ @ $  	  #!#AÔj(    ( A#( !   (!  Aj Aj A j$   T# Ak"$  AA@"6  ( ! @ ò! $  Aj!	    6  Aj! Aj$  ­# Ak"$ #Aàj-  E@#"A¾j
-! AàjA:   AÜj 6 @@ù@  .è $  Aj	  !  $ #	"A 6  #AÀj6  @@@@ ("AF@  @ AF@  ( !  AG@  !  $ @ $  	    A   ! @ AF@@  !  $ @ $  	  @ #Aìj!@ !  $  	  $ @ $  	  #!#AÜj(    ( A#( ! #( !  Aj Aj$   ¦# Ak"$ @  GAG@AN! A: @   G6 #Añj Aj« A : #
-#S $  - @ P	     ¬" 6@  ò!  $  Aj!	   (  Aj! Aj$ A G ì# A k" $ #Aèj-  E@#"A¾j
-! AèjA:   Aäj 6   #( "6   6@@ù@  é6  Aj  Aj  $   Aj	   $   Aj@	 !  $ #	"A 6  #Aèj6 @@@@ ("AF@ @ AF@ ( ! AG@ !  $ @  $  	   A  !@ AF@@ !  $ @  $  	  @  Aj#Aìj!@ !  $  	   $ @  $  	  #!#Aäj(   ( A#( !   (!  Aj  Aj  A j$     A #AÀjA A /  A 0     ( Ak( j   3     ( Ak( j2     ( Ak( j   3     ( Ak( j4¥# Ak" $   #AŞj
-;"6@   #( <"6 !@@ =!@ #( F  >?  "=! >!  $ @  Aj!	   $   Aj!	   Aj!  Aj!  Aj$    #( G@    ( Aj6  # Ak"$  AA@"6@ A   (     , A HAB A#AûjAB A#AéjAB A#A¥jAB $  Aj!	  Aj! Aj$  Ù# Ak"$  AA@"6@ A   (     , A H"C A C A C AA@" 6@  A #AşjAB  A#AËjAB  A#AšjAB #v(   # #>(  # $ @ Aj!	  $  Aj!	  Aj! Aj! Aj$  S@#A˜j-  Aq@#A”j( !#"A¹j A†j5! A˜jA:   A”j 6      ## !@  (  $    A 6   +# Ak"$   6   6#u AjD Aj$ Ö# Ak"$ #"AŞj
-!  Aj
-#( E"6@@ AÛj
-!#A³j
-!  FA !AG  GAG  A H G  AH> G  AHAH> G  AHAH#( G  AH G  AH!  $  Aj!	    F! Aj! Aj$     (   (è	# A k"	! 	$ A(I"A 6 A!
-A!@@ 
-AG@ 	A k""$  Ak""	$   6  6  6  6  6J!  6  6  6  6  6  "6 A !@ A  K!L!@@ @ M@@AN!  O! 	$  P	     #t  Q  6  6  6  6  6@ !@ R A j$  #A S 	$   6  6  6  6  6 !  6  6  6  6  6	 ! 	$  (! ( "(  ( (T"
-@ (! (! (! (! (! (R  U  %   G J@ E@  >   X>#(     6  )@    ( *6     @  AU D# !  #"( 6  ( !  A 6   6@  A @` $   _	   4  , A N@   ) 7    (6     (  (s  æ# A0k"$  A6    f!@ AA@" 6, (! A 6(  6$@ A$j  A  g A6   6 Aj  A h A6  6 Aj  A i #Aèj!@ Aj  \  a $  	  $ @ A,j!	  $  ^	   A,j! A0j$ "    6    (   , A H
-6      "a  0    ( G@   6   (‡    ( ²6    6S# Ak"$   (!  ( ( !   "6@    # $  Aj!	  Aj! Aj$    AœA A¢
-»D @  G@  c  (Aj6 Aj!   6    ( 6   (6
-    de   (     , A HA   ( (   ( BG# !  #"( 6  ( !  A 6   6@  A ( @j $   ^	   5# Ak"$    ( 6   (6 Aj   k Aj$ 5# Ak"$    ( 6   (6 Aj   l Aj$ 5# Ak"$    ( 6   (6 Aj   m Aj$ 5# Ak"$    ( 6   (6 Aj   n Aj$ 5# Ak"$    ( 6   (6 Aj   q Aj$ 5# Ak"$    ( 6   (6 Aj   r Aj$ *    (op   ( " (     , A HAB   @  "#(    ( (   ( C*    (-p   ( " (     , A HAB+    (( p   ( " (     , A HAB   13 vA , # Ak" $    6   6 #AÆj  w  Aj$  G# Ak"$ A! AG@  : A    AjA  ( (0 AG! Aj$  , # Ak" $    6   6 #AÆj  x  Aj$  -# !  #Aj6 @  Aj   € $       #Aj6   Aj     FAG  ‚  Ê# Ak"$   #"( 6  ( !  B 7   6  A 6  Aj!@@@@ FAF@ A ~! FA	F   ( !   6 @ yE   ( GAF @AN!  ( ! A: @ F! A:   z6  ( !  A:    G6 #A˜j Aj Aj{ A : #
-#S $  - @@ P	    A;    ( ƒ6  ( ²! $  	    6 Aj$    O# Ak"$ @@ AjÎ!    „   Aj… $  †	  † Aj$ Š# Ak"$ @@@@@@@@  F"Ak  AG #A„j
-  " 6@  #( <!  $  Aj!	    ¦§! AN! A: @  F!  A:    z6  #AÊj ¨ A : #
-#S $  - @ P	    §!     6 Aj! Aj! Aj$   ”# !  #="A j68   Aj6   A8j!@  #Aj  Aj" ï"#="Aj6   A j6 @  t" B 7   #:Aj6   A60  B 7( $  #Aj	  $  	  X# A k"$  #<6 #;6  6 #6 #6  6 A6  Aj6     ‡ A j$    #ˆ" A8j     |3   (  Aj  , A H   (        ¡          œ     (  (‰5   ( "6    Ak( j (6   Aj¥   Aj•
-# A k"$     ( Ak( j"(!
- (! (! Ú! Aj!	@@@@  6œ  L@   Š-  E@@ Aj#Aäj! ‹ $  	     Š! A : › A6”   A›j A”j   Aœj Œ!@  (œ"L@@@ Aj#A°j!   ‹ $   	    Alj!@ - ›E@      (”@@@ AjÎ! ( Ak(  j    ( Ak( j 	 ( Ak( j" ( A€r6      (”  	…A ! ( - " ÀA H!@  F@@   (   - "ÀA H" (  å $  	   (   , A H j"-  A+F@ A :   Aj!   $  †	   † (œAj!       ( Ak"( j 6   ( j 6   ( j 
-6   ( j ß A j$    (L"AF@    à"6L À\ !@@@ ,  "A%G@      k     k - A%G Aj"! Aj! B# !@@A N!   (     , A HA’!  $  P	   ##S ƒ# Ak"$ @@ -  A%G@@@ Aj#A 	j!   ‹ $   	      ( Ak"( jA 6   ( jA6   ( jA ß    ( "Ak( j" (A€à~q6  Aj!
-@ Ak!@@  Aj"6 @@@@@ , "	A+k @ 	A k  
- ( j" ( A€r6  ! !   ( j"- A q A0ß 
-  ( "Ak( j" ( AÏ~qAr6    ( jA ß 
-  ( "Ak( j" ( AÏ~qA r6  ! ! 
- ( j- Aq A:   
- ( j" ( A€r6  A :  A! ! 	A0kAÿq"A	M@   Ak( j 6 ( "-  !	 	AÿqA*G@ A
-I@@  ( "L@@@ Aj#A£j! ‹ $  	    Aj6   Alj‘!  ( ! A N   Ak( jA ß    ( "Ak( j" (AÏ~qA r6A  k!   ( !A !   Ak( j 6  ( "Aj"6  - !	A!
- 	AÿqA.F@  Aj6 @@ - "A*F@  Aj6   ( "J@  Aj6   Alj‘!@@ Aj#Aj! ‹ $  	   A0kAÿqA	M@ !A ! A-G  Aj6   A !    ( Ak( j 6 ( !@@@@@@@@@@@@@@@@@@@@@ -  "Aè k"AMA A tA• q AÌ Fr@  Aj"6 @A! À"Aá k @ AÁ k	  E AØ G    ( Ak( j" (A€€r6A!  ( !  ( !  ( !    ( "Ak( j" (A€€r6   Ak"( j" (Aû}qA€r6   ( j"   (AµqAr6    ( "Ak( j" (A€€r6   Ak( j"   (Aû}qAr6    ( "Ak( j" (A€€r6   Ak"( j" (AµqAr6   ( j"   (Aû}q6	@@ Aj#A×j!   ‹ $   	    ( ! 	AÿqA.F@    Ak( j(6    Ak( j"   (Ar6@@ Aj#A”j! 
-  ‹ $   	  @@ Aj#AŞ	j! 	  ‹ $   	  AÀ !    ( Ak"( j" (Aµq r6 
- 	AÿqA.Gr   ( j" ( j6   ( j" (AÏ~qAr6   ( jA0ß   ( !     ( Aj!   Aj$  ™# Ak"$   ( E@@@ Aj#AÁj! ‹ $  	    ("E@@@ Aj#AÁj! ‹ $  	    (!      (  	  Aj$    (LAF@  à   6LV# Ak"$  Aj"  ”@ #s–" A   ( ( !  $  Aj•	  Aj• Aj$   @  ( !@ -  "A0kAÿqA	KE@   Aj"6  A
-l jA0k! ‘# Ak"$   ( E@@@ Aj#AÁj! ‹ $  	    ("E@@@ Aj#AÁj! ‹ $  	    (!  (     Aj$ C# !  #9Aj6 @  Aj  $   	   B 7   :   A 6  ‚  #9Aj6 # Ak"$    Aj6@ ("( @ ( ! (!@  G@ Ak!  6 (( 3 $   Aj$   Aj  ·
-# Ak"$ @@@ Aj  —"
--  E     ( Ak( j"(! (!@ Ú!  "j"  A°qA F!	 !A !# Ak"$ @ "E  (! 	 k"A J@    ( (0  G   k"kA   H"A J@ Aj"  š@  (  , A H  ( (0 ! $  Aj	  Aj  G  	k"A J@  	  ( (0  G A 6 ! Aj$      ( Ak( j" (Ar› $  
-˜	   $ @    ( Ak( j™ $ @ $  	  
-˜ Aj$ 	   “3=  Ak-  Ağ F@    ( ! A N@    Ÿ    $åB# Ak"$ @@ Aj#A¯j!   ‹ $   	    Aj$ A     (  @ A  A J!@@     G  j-     Aj!  6  Ak-  Aã F@   ¢ A N@    £   ( ¤. ,  !# Ak"$   :    AjAå Aj$ # A k"$ @@ AjÎ!  ( ¤ Aj" Aj…@   (  - " ÀA H" (   "     H $  Aj	  $  †	  Aj † A j$    #:Aj6   A j  1+# !  #Aj6 @  Aj  © $    M# Ak"$ @@ AjÎ!   ª   Aj… $  †	  † Aj$ F# A k"$  #6 #6  6 A6  Aj6    Aj‡ A j$    A¤A¨AË»+# !  #Aj6 @  Aj  ­ $       FA
-G  ®  M# Ak"$ @@ AjÎ!   ¯   Aj… $  †	  † Aj$ 	   A
-¼F# A k"$  #<6 #;6  6 A6  Aj6    Aj‡ A j$ -# !  #Aj6 @  Aj   ² $    O# Ak"$ @@ AjÎ!    ³   Aj… $  †	  † Aj$ \# A k"$  #"6 #"6  6  6  6  6 A6  Aj6     ‡ A j$  #A¬j #A jG# A k"$ @@ Aj  µ!      ¶! $   	    A j$  }# !  #"( 6    ( 6  Aj AjZ!   - :    - ":    (6 E@@   º"6  ²! $  	    6  Å# A0k"$ #%( "E@#"Aüj€#% AÀj AŸj5"6  #( "6(  6$@@   ·" 6 @  "6@  "6@  "6@        6 A$j Aj $ @ Aj!	  $ @ Aj!	  $ @ Aj!	  $ @ A j!	 #! @ Aj! Aj! Aj! A j! A$j  Aİj¸@@AN!   #A S@ ($)@@@AN!    ($O!  $ @  P	   A$j#AÓj¸@@A N!  A: /@ Aj" ($¹ A: .@   (  , A HA’ A : .##S $  - .! Aj  Aq: /	   $  - /@@  P	   ($ A$j A0j$   #A S $  A$j	     A˜ Aœ ½J# Ak"$  AA@"6@ A   ºB $  Aj!	  Aj! Aj$     (  VA G    à   - @  (   İA# A k"$ @@ Aj  µ!   »! $   	    A j$  Ä# A k"$ #"( "E@#"A«j€#" AÀj Aãj5"6  #( "6  6@@   ·" 6@      6 Aj Aj $ @ Aj!	 #! @ Aj! Aj  Aİj¸@@AN!   #A S@ ()@@@AN!    (O!  $ @  P	   Aj#AÓj¸@@A N!  A: @ Aj" (¹ A: @   (  , A HA’ A : ##S $  - ! Aj  Aq: 	   $  - @@  P	   ( Aj A j$   #A S $  Aj	  G# A k"$ @@ Aj  µ!      ¼! $   	    A j$  Å# A0k"$ #!( "E@#"AÌj€#! AÀj Aß
-j5"6  #( "6(  6$@@   ·" 6 @  "6@  "6@  "6@        6 A$j Aj $ @ Aj!	  $ @ Aj!	  $ @ Aj!	  $ @ A j!	 #! @ Aj! Aj! Aj! A j! A$j  Aİj¸@@AN!   #A S@ ($)@@@AN!    ($O!  $ @  P	   A$j#AÓj¸@@A N!  A: /@ Aj" ($¹ A: .@   (  , A HA’ A : .##S $  - .! Aj  Aq: /	   $  - /@@  P	   ($ A$j A0j$   #A S $  A$j	     #( Ä    ÅÆ#!    Ç ( È-    A  Ê") 7    (6 B 7  A 6+     É") 7    (6 B 7  A 6º# A0k"$   # Aj6 @ Aj" Aj#AÁj"#Aéj A$j"  (   - "ÀA H" (  Ü") 7   (6 B 7  A 6  Aj #Aêj $   A$j Aj  A0j$      # Aj6   Aj  q# Ak"$   #"( 6    ( 6@    Ë"6@   Ì $ @ Aj!	  $   ¿	  Aj! Aj$      (   AjÎB# Ak"$ @@ Aj Ï!   Ğ $  Ã	  Ã Aj$     #( ÕÖt# Ak"$   "6@   (  Ô" 6@   <!  $ @ Aj!	  $  Aj!	  Aj! Aj! Aj$   …# Ak" $  ÍE@@@#A¡j
-!    "6@ #( <!  $ @  Aj!	  !  $ #	"A 6  #A¼j6 @ (AF@ AN!  A: @ F!  A:    z6 #AÏj  Aj¨  A : #
-#S  $   - @ P@  $  	  	   Aj!  Aj$  H#H!  ( "  (   , A H
-Ó" ( F@#(  FAF   < »# Ak"$   #"( 6    ( 6@A F"tAˆqE AKrE@   Ñ Aj$   @AN! A: @ F! A:   z6 #A’j Aj¨ A : #
-#S $  - @@ P	  $   Ã	  8# !  #"( 6    ( 6@   Ò $   Ã	       G@   ( Ñ  D# Ak"$   "6@   Ø!  $  Aj!	  Aj! Aj$   F# Ak"$   "6@  " ×!  $  Aj!	  Aj! Aj$   U# Ak"$    " 6@   Ù!  $  Aj!	    6 Aj! Aj! Aj$   ‹# Ak"$    (Ú"6@   Ù"6@   ( " (     , A H
-Û $ @ Aj!	  $  Aj!	  Aj! Aj! Aj$  T# Ak"$  A
-A@"6  -  ! @ ò! $  Aj!	    6  Aj! Aj$  	   Â3Z  Aj"A A ŞAG@#G! AN"  Aj6  ##S   (   - "ÀA H"  (    (ß	   3 #Aøj±# Ak"$ @  FA	G@  y@  GAFAN! A: @  F! A:   z6 A:    G6 #A˜j Aj Aj{ A : #
-#S $  - @ P	    }A ~  á Aj$   #A¨ j #Aœ!j     â—# A0k"$ #( "E@#"AÍj¨# AÀj A j5"6  #( "6(  6$@@   " 6 @  "6@  "6@       6 A$j Aj $ @ Aj!	  $ @ Aj!	  $ @ A j!	 #! @ Aj! Aj! A j! A$j  Aİj¸@@AN!   #A S@ ($)@@@AN!    ($O!  $ @  P	   A$j#AÓj¸@@A N!  A: /@ Aj" ($¹ A: .@   (  , A HA’ A : .##S $  - .! Aj  Aq: /	   $  - /@@  P	   ($ A$j A0j$   #A S $  A$j	     A”"A˜"½      ãÂ# A0k"$ #( "E@#"A©j¨# AÀj AĞj5"6  #( "6(  6$@@   " 6 @  "6@  "6@  "6@        6 A$j Aj $ @ Aj!	  $ @ Aj!	  $ @ Aj!	  $ @ A j!	 #! @ Aj! Aj! Aj! A j! A$j  Aİj¸@@AN!   #A S@ ($)@@@AN!    ($O!  $ @  P	   A$j#AÓj¸@@A N!  A: /@ Aj" ($¹ A: .@   (  , A HA’ A : .##S $  - .! Aj  Aq: /	   $  - /@@  P	   ($ A$j A0j$   #A S $  A$j	     äÁ# A k"$ #( "E@#"A‰j¨# AÀj Ağj5"6  #( "6  6@@   " 6@      6 Aj Aj $ @ Aj!	 #! @ Aj! Aj  Aİj¸@@AN!   #A S@ ()@@@AN!    (O!  $ @  P	   Aj#AÓj¸@@A N!  A: @ Aj" (¹ A: @   (  , A HA’ A : ##S $  - ! Aj  Aq: 	   $  - @@  P	   ( Aj A j$   #A S $  Aj	   #A¤"j #A˜#j å# A k" $ #( "E@#"A j±# AÀj A®j5"6   #( "6   6@@    6  Aj"  Aj #Aİj¸@@AN! #A S@  ()@@@AN!   (O!  $ @ P	    Aj#AÓj¸@@A N!  A: @  Aj"  (¹  A: @   (   , A HA’  A : ##S  $   - !  Aj   Aq: 	    $   - @@ P	    (  Aj  A j$  #A S  $   Aj	     A$A”$½   æÄ# A k"$ #( "E@#"Aîj±# AÀj A‚j5"6  #( "6  6@@   " 6@      6 Aj Aj $ @ Aj!	 #! @ Aj! Aj  Aİj¸@@AN!   #A S@ ()@@@AN!    (O!  $ @  P	   Aj#AÓj¸@@A N!  A: @ Aj" (¹ A: @   (  , A HA’ A : ##S $  - ! Aj  Aq: 	   $  - @@  P	   (ç Aj A j$   #A S $  Aj	  £# Ak"$ @  GAG@AN! A: @   G6 #Añj Aj« A : #
-#S $  - @ P	     ê" 6@  ò!  $  Aj!	   (  Aj! Aj$     èÉ# A k"$    : #( " E@#" A‹j±#  AÀj  Aşj5" 6  #( "6  6@@  AjÚ"6@      6 Aj Aj $ @ Aj!	 #! @ Aj! Aj  Aİj¸@@AN!   #A S@ ()@@@AN!    (O!  $ @  P	   Aj#AÓj¸@@A N!  A: @ Aj" (¹ A: @   (  , A HA’ A : ##S $  - ! Aj  Aq: 	   $  - @@  P	   Aj A j$   #A S $  Aj	   é# A k" $ #( "E@#"A¸j±# AÀj A’j5"6   #( "6   6@@    6  Aj"  Aj #Aİj¸@@AN! #A S@  ()@@@AN!   (O!  $ @ P	    Aj#AÓj¸@@A N!  A: @  Aj"  (¹  A: @   (   , A HA’  A : ##S  $   - !  Aj   Aq: 	    $   - @@ P	    (  Aj  A j$  #A S  $   Aj	     FAG  ë  	   A¼M@# j-  Aq@# j( !#"A¹j  j5!  jA:    j 6      ±# Ak"$ @  F G@  F"AKA tA€ÈƒqEr   °!  Aj$   AN! A: @  F!  A:    z6 A:   z6 #Aj Aj Aj± A : #
-#S $  - @ P	  É# A@j"$ #! Aj"½@ Aj AÈj!  6$@ A(j Z!@ A4j A$j¾ $  	  $  	  $  Aj¿	    Aj"¿ A: @@@ Aj#A™j!@  A$j Z"6  Aj6@ A4j#AÀj À $  	  $  	   @# j-  @# j( !#"AÀj Aô
-j5!#" jA:    j 6       @AN! A: ?@ Aj  !  A: >@ Aj"#AËj  Œ A: =@ A$j" #A±j  Á!@ ###$S $  A$j A : =	   $  - =! Aj  Aq: >	   $  - >!    Aq: ?	   $  - ?@@ P	   $  A4jÃ	  A4jÃ A@k$  «$ #¤$ÿ % 	 }}}}      (  0          ÿ % 	 }}}}      (  0          ÿ % 	 }}}}      (  0          ÿ % 	 }}}}      (  0          ÿ % 	 }}}}      (  0          ÿ % 	 }}}}      (  0          ÿ % 	 }}}}      (  0          ÿ % 	 }}}}      (  0          ÿ % 	 }}}}      (  0          ÿ % 	 }}}}      (  0          identity quietly as.environment tinyformat: Not enough format arguments class sys.calls names _fst_setnrofthreads _fstcore_setnrofthreads _fst_getnrofthreads _fstcore_getnrofthreads %.*s dataptr try-error interrupted-error simpleError C++Error as.character _fst_fsthasher _fstcore_fsthasher evalq Rcpp stop _fst_fstcomp _fstcore_fstcomp _fst_fstdecomp _fstcore_fstdecomp _fst_hasopenmp _fstcore_hasopenmp condition tinyformat: Cannot convert from argument type to integer for use as variable width or precision tinyformat: Not enough arguments to read variable precision call Rcpp:longjumpSentinel _fst_restore_after_fork _fstcore_restore_after_fork cppstack tinyformat: Not enough arguments to read variable width tryCatch tinyformat: Too many conversion specifiers in format string tinyformat: Not enough conversion specifiers in format string tinyformat: Conversion spec incorrectly terminated by end of string Rcpp_precious_preserve Rcpp_precious_remove _fst_fstretrieve _fstcore_fstretrieve _fstcore_RcppExport_validate _fst_fststore _fstcore_fststore ' not found in fstcore require exitRNGScope enterRNGScope line file demangle message rcpp_set_stack_trace rcpp_get_stack_trace Rcpp_stack_trace Function not exported tinyformat: the %a and %A conversion specs are not supported tinyformat: %n conversion spec not supported Assertion failed _fst_fstmetadata _fstcore_fstmetadata Embedded NUL in string. Not compatible with requested type: [type=%s; target=%s]. Not compatible with STRSXP: [type=%s]. Expecting a single value: [extent=%i]. Expecting a single string value: [type=%s; extent=%i]. Cannot convert object to an environment: [type=%s; target=ENVSXP]. Cannot convert object to a function: [type=%s; target=CLOSXP, SPECIALSXP, or BUILTINSXP]. c++ exception (unknown reason) void(*restore_after_fork)(bool) SEXP(*fstmetadata)(Rcpp::String) SEXP(*fstretrieve)(Rcpp::String,SEXP,SEXP,SEXP) SEXP(*fststore)(Rcpp::String,SEXP,SEXP,SEXP) SEXP(*fstcomp)(SEXP,SEXP,SEXP,SEXP) SEXP(*fsthasher)(SEXP,SEXP,SEXP) int(*setnrofthreads)(SEXP) SEXP(*fstdecomp)(SEXP) SEXP(*getnrofthreads)() SEXP(*hasopenmp)() C++ function with signature ' :  N4Rcpp8internal20InterruptedExceptionE N4Rcpp17LongjumpExceptionE N4Rcpp9exceptionE N4Rcpp8RostreamILb1EEE N4Rcpp8RostreamILb0EEE N4Rcpp10RstreambufILb1EEE N4Rcpp10RstreambufILb0EEE N4Rcpp14not_compatibleE   ÿ      t  N4Rcpp21function_not_exportedE N4Rcpp10eval_errorE N4Rcpp22embedded_nul_in_stringE      ì	      
-      .
-          ‘         Ò         N         ‘         Ã         á                   î         æ                               $       $          ÜÿÿÿÜÿÿÿ$          Ğ      ä  $                   ÜÿÿÿÜÿÿÿ                @
-      $                 ÜÿÿÿÜÿÿÿ          <  t  ˆ  P  $                   ÜÿÿÿÜÿÿÿ                W
-          Ü                                                              n
-          (                                                              ˆ
-          ¢
-          4                  0                  Ì
-          ë
-          h                  ÿ
-          ”                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @target_features+mutable-globals+sign-ext+exception-handling
